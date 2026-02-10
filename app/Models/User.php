@@ -60,4 +60,9 @@ public function isUser()
     {
         return $this->hasOne(Student::class);
     }
+
+    public function teacher()
+    {
+        return $this->hasOne(Teacher::class);
+    }
 }
