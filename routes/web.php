@@ -133,6 +133,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.users.student');
     Route::patch('/admin/users/{user}/teacher', [DashboardController::class, 'linkTeacher'])
         ->name('admin.users.teacher');
+    Route::post('/admin/courses/assign', [DashboardController::class, 'assignCourseTeacher'])
+        ->name('admin.courses.assign');
 
     Route::resource('filieres', FiliereController::class)->except(['show']);
     Route::resource('courses', CourseController::class)->except(['show']);

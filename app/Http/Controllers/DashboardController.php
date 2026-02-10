@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
+use App\Models\Filiere;
 use App\Models\Memoire;
 use App\Models\Soutenance;
 use App\Models\RecuPaiement;
@@ -45,6 +47,8 @@ class DashboardController extends Controller
         $recus = RecuPaiement::with('student')->orderByDesc('date_paiement')->take(10)->get();
         $studentsList = Student::orderBy('nom')->orderBy('prenom')->get();
         $teachersList = Teacher::orderBy('nom')->orderBy('prenom')->get();
+        $filieres = Filiere::withCount('enrollments')->orderBy('nom')->get();
+        $coursesList = Course::with('filiere')->orderBy('nom')->get();
         $users = auth()->user()?->role === 'admin'
             ? User::with('student')->orderBy('name')->get()
             : collect();
@@ -64,6 +68,8 @@ class DashboardController extends Controller
             'recus',
             'studentsList',
             'teachersList',
+            'filieres',
+            'coursesList',
             'users'
         ));
     }
@@ -139,5 +145,18 @@ class DashboardController extends Controller
         }
 
         return back()->with('success', 'Liaison mise a jour.');
+    }
+
+    public function assignCourseTeacher(Request $request)
+    {
+        $data = $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'teacher_id' => 'required|exists:teachers,id',
+        ]);
+
+        $course = Course::findOrFail($data['course_id']);
+        $course->teachers()->syncWithoutDetaching([$data['teacher_id']]);
+
+        return back()->with('success', 'Cours assigne a l\'enseignant.');
     }
 }
