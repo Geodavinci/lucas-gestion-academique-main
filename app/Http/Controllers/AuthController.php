@@ -27,9 +27,13 @@ class AuthController extends Controller
             $request->session()->regenerate();
 
             $role = Auth::user()->role ?? 'user';
-            return $role === 'admin'
-                ? redirect()->intended(route('dashboard'))
-                : redirect()->intended(route('student.profile'));
+            if ($role === 'admin') {
+                return redirect()->intended(route('dashboard'));
+            }
+            if ($role === 'teacher') {
+                return redirect()->intended(route('teacher.dashboard'));
+            }
+            return redirect()->intended(route('student.profile'));
         }
 
         return back()->withErrors([
@@ -59,9 +63,13 @@ class AuthController extends Controller
         Auth::login($user);
 
         $role = $user->role ?? 'user';
-        return $role === 'admin'
-            ? redirect()->route('dashboard')
-            : redirect()->route('student.profile');
+        if ($role === 'admin') {
+            return redirect()->route('dashboard');
+        }
+        if ($role === 'teacher') {
+            return redirect()->route('teacher.dashboard');
+        }
+        return redirect()->route('student.profile');
     }
 
     public function logout(Request $request)

@@ -497,7 +497,8 @@
                                         <tr class="text-left text-slate-600">
                                             <th class="px-4 py-3 font-medium">Utilisateur</th>
                                             <th class="px-4 py-3 font-medium">Rôle</th>
-                                            <th class="px-4 py-3 font-medium text-right">Actions</th>
+                                            <th class="px-4 py-3 font-medium text-right">Étudiant lié</th>
+                                            <th class="px-4 py-3 font-medium text-right">Enseignant lié</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
@@ -515,6 +516,7 @@
                                                     <select name="role" x-model="role"
                                                             class="rounded-lg border-slate-300 text-sm focus:border-slate-400 focus:ring-2 focus:ring-slate-200">
                                                         <option value="user">Utilisateur</option>
+                                                        <option value="teacher">Enseignant</option>
                                                         <option value="admin">Administrateur</option>
                                                     </select>
                                                     <button type="submit" 
@@ -543,10 +545,30 @@
                                                     </button>
                                                 </form>
                                             </td>
+                                            <td class="px-4 py-3 text-right">
+                                                <form method="POST" action="{{ route('admin.users.teacher', $user) }}" 
+                                                      class="inline-flex items-center gap-2">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <select name="teacher_id" 
+                                                            class="rounded-lg border-slate-300 text-sm focus:border-slate-400 focus:ring-2 focus:ring-slate-200">
+                                                        <option value="">Lier un enseignant</option>
+                                                        @foreach ($teachersList as $teacher)
+                                                            <option value="{{ $teacher->id }}" @selected($user->teacher?->id === $teacher->id)>
+                                                                {{ $teacher->nom }} {{ $teacher->prenom }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <button type="submit" 
+                                                            class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:border-slate-400">
+                                                        Lier
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td class="px-4 py-6 text-center text-slate-500" colspan="3">
+                                            <td class="px-4 py-6 text-center text-slate-500" colspan="4">
                                                 Aucun utilisateur à gérer
                                             </td>
                                         </tr>
