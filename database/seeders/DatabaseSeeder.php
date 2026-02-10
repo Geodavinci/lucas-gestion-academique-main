@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
             MemoireSeeder::class,
             SoutenanceSeeder::class,
             RecuPaiementSeeder::class,
+            FiliereCourseSeeder::class,
+            EnrollmentSeeder::class,
+            TeacherUserSeeder::class,
+            GradeSeeder::class,
         ]);
     }
 }

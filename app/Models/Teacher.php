@@ -32,4 +32,19 @@ class Teacher extends Model
         return $this->hasMany(Soutenance::class, 'president_jury_id');
     }
 
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class)->withTimestamps();
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\FiliereController;
 use App\Http\Controllers\MemoireController;
 use App\Http\Controllers\SoutenanceController;
 use App\Http\Controllers\RecuPaiementController;
@@ -10,6 +12,9 @@ use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\TeacherDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/app', [DashboardController::class, 'index'])->name('app.home');
     Route::get('/mon-dossier', [StudentProfileController::class, 'show'])->name('student.profile');
     Route::get('/mon-dossier/pdf', [StudentProfileController::class, 'pdf'])->name('student.profile.pdf');
+    Route::get('/teacher/dashboard', [TeacherDashboardController::class, 'index'])->name('teacher.dashboard');
+    Route::get('/teacher/courses/{course}/grades', [GradeController::class, 'create'])->name('grades.create');
+    Route::post('/teacher/courses/{course}/grades', [GradeController::class, 'store'])->name('grades.store');
 
     Route::resource('students', StudentController::class);
     Route::get('students/{student}/memoires', [MemoireController::class, 'byStudent'])
@@ -123,6 +131,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.users.role');
     Route::patch('/admin/users/{user}/student', [DashboardController::class, 'linkStudent'])
         ->name('admin.users.student');
+    Route::patch('/admin/users/{user}/teacher', [DashboardController::class, 'linkTeacher'])
+        ->name('admin.users.teacher');
+
+    Route::resource('filieres', FiliereController::class)->except(['show']);
+    Route::resource('courses', CourseController::class)->except(['show']);
+    Route::resource('enrollments', EnrollmentController::class)->only(['index', 'create', 'store', 'destroy']);
 });
 
 /*

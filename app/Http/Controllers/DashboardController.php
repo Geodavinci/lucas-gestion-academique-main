@@ -71,7 +71,7 @@ class DashboardController extends Controller
     public function updateUserRole(Request $request, User $user)
     {
         $data = $request->validate([
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,user,teacher',
         ]);
 
         if ($request->user()->id === $user->id && $data['role'] !== 'admin') {
@@ -106,6 +106,35 @@ class DashboardController extends Controller
         } else {
             if ($user->student) {
                 $user->student->update(['user_id' => null]);
+            }
+        }
+
+        return back()->with('success', 'Liaison mise a jour.');
+    }
+
+    public function linkTeacher(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'teacher_id' => 'nullable|exists:teachers,id',
+        ]);
+
+        $teacherId = $data['teacher_id'] ?? null;
+
+        if ($teacherId) {
+            $teacher = Teacher::findOrFail($teacherId);
+
+            if ($teacher->user_id && $teacher->user_id !== $user->id) {
+                return back()->with('error', 'Cet enseignant est deja lie a un autre compte.');
+            }
+
+            if ($user->teacher && $user->teacher->id !== $teacher->id) {
+                $user->teacher->update(['user_id' => null]);
+            }
+
+            $teacher->update(['user_id' => $user->id]);
+        } else {
+            if ($user->teacher) {
+                $user->teacher->update(['user_id' => null]);
             }
         }
 

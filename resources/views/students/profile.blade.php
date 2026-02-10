@@ -75,6 +75,39 @@
                 <p class="text-sm text-slate-500">Aucune soutenance enregistree.</p>
             @endif
         </div>
+
+        <div class="bg-white rounded border border-slate-200 p-6 mt-6">
+            <h2 class="text-lg font-semibold mb-4">Notes</h2>
+            @php
+                $grades = $student->grades->load('course');
+            @endphp
+            @if ($grades->isNotEmpty())
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-slate-50 text-slate-600">
+                            <tr>
+                                <th class="text-left px-4 py-3">Cours</th>
+                                <th class="text-left px-4 py-3">Code</th>
+                                <th class="text-left px-4 py-3">Note</th>
+                                <th class="text-left px-4 py-3">Session</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($grades as $grade)
+                                <tr class="border-t">
+                                    <td class="px-4 py-3">{{ $grade->course?->nom }}</td>
+                                    <td class="px-4 py-3">{{ $grade->course?->code }}</td>
+                                    <td class="px-4 py-3">{{ $grade->note }}</td>
+                                    <td class="px-4 py-3">{{ $grade->session }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <p class="text-sm text-slate-500">Aucune note disponible.</p>
+            @endif
+        </div>
     @endif
 </div>
 @endsection
