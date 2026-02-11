@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class StudentProfileController extends Controller
 {
@@ -22,7 +23,9 @@ class StudentProfileController extends Controller
             'grades.course',
         ])->where('user_id', $user->id)->first();
 
-        return view('students.profile', compact('student'));
+        return Inertia::render('Student/Profile', [
+            'student' => $student,
+        ]);
     }
 
     public function pdf(Request $request)

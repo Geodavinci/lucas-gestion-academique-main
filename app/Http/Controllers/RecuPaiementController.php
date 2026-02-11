@@ -6,6 +6,7 @@ use App\Models\RecuPaiement;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class RecuPaiementController extends Controller
 {
@@ -28,14 +29,22 @@ class RecuPaiementController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('recu_paiements.index', compact('recus', 'search', 'date'));
+        return Inertia::render('Recus/Index', [
+            'recus' => $recus,
+            'filters' => [
+                'search' => $search,
+                'date' => $date,
+            ],
+        ]);
     }
 
     public function create()
     {
         $students = Student::query()->orderBy('nom')->orderBy('prenom')->get();
 
-        return view('recu_paiements.create', compact('students'));
+        return Inertia::render('Recus/Create', [
+            'students' => $students,
+        ]);
     }
 
     public function store(Request $request)
@@ -103,14 +112,19 @@ class RecuPaiementController extends Controller
 
     public function show(RecuPaiement $recu_paiement)
     {
-        return view('recu_paiements.show', ['recu' => $recu_paiement]);
+        return Inertia::render('Recus/Show', [
+            'recu' => $recu_paiement->load('student'),
+        ]);
     }
 
     public function edit(RecuPaiement $recu_paiement)
     {
         $students = Student::query()->orderBy('nom')->orderBy('prenom')->get();
 
-        return view('recu_paiements.edit', ['recu' => $recu_paiement, 'students' => $students]);
+        return Inertia::render('Recus/Edit', [
+            'recu' => $recu_paiement,
+            'students' => $students,
+        ]);
     }
 
     public function update(Request $request, RecuPaiement $recu_paiement)

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class StudentController extends Controller
 {
@@ -26,12 +27,19 @@ class StudentController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('students.index', compact('students', 'filiere', 'niveau', 'matricule'));
+        return Inertia::render('Students/Index', [
+            'students' => $students,
+            'filters' => [
+                'filiere' => $filiere,
+                'niveau' => $niveau,
+                'matricule' => $matricule,
+            ],
+        ]);
     }
 
     public function create()
     {
-        return view('students.create');
+        return Inertia::render('Students/Create');
     }
 
     /**
@@ -79,7 +87,12 @@ class StudentController extends Controller
         $memoires = $memoiresQuery->get();
         $recus = $student->recuPaiements()->orderByDesc('date_paiement')->get();
 
-        return view('students.show', compact('student', 'memoires', 'recus', 'search'));
+        return Inertia::render('Students/Show', [
+            'student' => $student,
+            'memoires' => $memoires,
+            'recus' => $recus,
+            'search' => $search,
+        ]);
     }
 
     /**
@@ -88,7 +101,9 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        return view('students.edit', compact('student'));
+        return Inertia::render('Students/Edit', [
+            'student' => $student,
+        ]);
     }
 
     /**

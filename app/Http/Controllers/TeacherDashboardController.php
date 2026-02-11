@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TeacherDashboardController extends Controller
 {
@@ -18,6 +19,8 @@ class TeacherDashboardController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        return view('teachers.dashboard', compact('teacher'));
+        return Inertia::render('Teacher/Dashboard', [
+            'teacher' => $teacher,
+        ]);
     }
 }

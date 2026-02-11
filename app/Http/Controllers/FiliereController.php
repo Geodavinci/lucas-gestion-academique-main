@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Filiere;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class FiliereController extends Controller
 {
@@ -11,12 +12,14 @@ class FiliereController extends Controller
     {
         $filieres = Filiere::withCount(['courses', 'enrollments'])->orderBy('nom')->get();
 
-        return view('filieres.index', compact('filieres'));
+        return Inertia::render('Filieres/Index', [
+            'filieres' => $filieres,
+        ]);
     }
 
     public function create()
     {
-        return view('filieres.create');
+        return Inertia::render('Filieres/Create');
     }
 
     public function store(Request $request)
@@ -33,7 +36,9 @@ class FiliereController extends Controller
 
     public function edit(Filiere $filiere)
     {
-        return view('filieres.edit', compact('filiere'));
+        return Inertia::render('Filieres/Edit', [
+            'filiere' => $filiere,
+        ]);
     }
 
     public function update(Request $request, Filiere $filiere)
