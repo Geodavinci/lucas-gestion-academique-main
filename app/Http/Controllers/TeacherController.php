@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TeacherController extends Controller
 {
@@ -25,12 +26,15 @@ class TeacherController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('teachers.index', compact('teachers', 'search'));
+        return Inertia::render('Teachers/Index', [
+            'teachers' => $teachers,
+            'search' => $search,
+        ]);
     }
 
     public function create()
     {
-        return view('teachers.create');
+        return Inertia::render('Teachers/Create');
     }
 
     public function store(Request $request)
@@ -58,12 +62,17 @@ class TeacherController extends Controller
             ->orderByDesc('date_soutenance')
             ->get();
 
-        return view('teachers.show', compact('teacher', 'soutenances'));
+        return Inertia::render('Teachers/Show', [
+            'teacher' => $teacher,
+            'soutenances' => $soutenances,
+        ]);
     }
 
     public function edit(Teacher $teacher)
     {
-        return view('teachers.edit', compact('teacher'));
+        return Inertia::render('Teachers/Edit', [
+            'teacher' => $teacher,
+        ]);
     }
 
     public function update(Request $request, Teacher $teacher)

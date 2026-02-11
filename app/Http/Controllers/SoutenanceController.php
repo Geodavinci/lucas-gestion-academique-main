@@ -6,6 +6,7 @@ use App\Models\Soutenance;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SoutenanceController extends Controller
 {
@@ -51,7 +52,17 @@ class SoutenanceController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('soutenances.index', compact('soutenances', 'search', 'statut', 'date', 'directeur_memoire', 'evaluateur', 'president_jury'));
+        return Inertia::render('Soutenances/Index', [
+            'soutenances' => $soutenances,
+            'filters' => [
+                'search' => $search,
+                'statut' => $statut,
+                'date' => $date,
+                'directeur_memoire' => $directeur_memoire,
+                'evaluateur' => $evaluateur,
+                'president_jury' => $president_jury,
+            ],
+        ]);
     }
 
     public function create()
@@ -59,7 +70,11 @@ class SoutenanceController extends Controller
         $students = Student::query()->orderBy('nom')->orderBy('prenom')->get();
         $teachers = Teacher::query()->orderBy('nom')->orderBy('prenom')->get();
 
-        return view('soutenances.create', compact('students', 'teachers'));
+        return Inertia::render('Soutenances/Create', [
+            'students' => $students,
+            'teachers' => $teachers,
+            'student' => null,
+        ]);
     }
 
     public function createForStudent(Student $student)
@@ -67,7 +82,11 @@ class SoutenanceController extends Controller
         $students = Student::query()->orderBy('nom')->orderBy('prenom')->get();
         $teachers = Teacher::query()->orderBy('nom')->orderBy('prenom')->get();
 
-        return view('soutenances.create', compact('students', 'teachers', 'student'));
+        return Inertia::render('Soutenances/Create', [
+            'students' => $students,
+            'teachers' => $teachers,
+            'student' => $student,
+        ]);
     }
 
     public function store(Request $request)
@@ -169,7 +188,9 @@ class SoutenanceController extends Controller
 
     public function show(Soutenance $soutenance)
     {
-        return view('soutenances.show', compact('soutenance'));
+        return Inertia::render('Soutenances/Show', [
+            'soutenance' => $soutenance->load(['student', 'directeurMemoire', 'evaluateurTeacher', 'presidentJury']),
+        ]);
     }
 
     public function edit(Soutenance $soutenance)
@@ -177,7 +198,11 @@ class SoutenanceController extends Controller
         $students = Student::query()->orderBy('nom')->orderBy('prenom')->get();
         $teachers = Teacher::query()->orderBy('nom')->orderBy('prenom')->get();
 
-        return view('soutenances.edit', compact('soutenance', 'students', 'teachers'));
+        return Inertia::render('Soutenances/Edit', [
+            'soutenance' => $soutenance,
+            'students' => $students,
+            'teachers' => $teachers,
+        ]);
     }
 
     public function update(Request $request, Soutenance $soutenance)

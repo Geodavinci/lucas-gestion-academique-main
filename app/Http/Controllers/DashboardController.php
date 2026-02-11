@@ -11,6 +11,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -50,28 +51,28 @@ class DashboardController extends Controller
         $filieres = Filiere::withCount('enrollments')->orderBy('nom')->get();
         $coursesList = Course::with('filiere')->orderBy('nom')->get();
         $users = auth()->user()?->role === 'admin'
-            ? User::with('student')->orderBy('name')->get()
+            ? User::with(['student', 'teacher'])->orderBy('name')->get()
             : collect();
 
-        return view('dashboard', compact(
-            'stats',
-            'latestMemoires',
-            'latestRecus',
-            'latestStudents',
-            'latestTeachers',
-            'latestSoutenances',
-            'latestPdfs',
-            'students',
-            'teachers',
-            'memoires',
-            'soutenances',
-            'recus',
-            'studentsList',
-            'teachersList',
-            'filieres',
-            'coursesList',
-            'users'
-        ));
+        return Inertia::render('Dashboard', [
+            'stats' => $stats,
+            'latestMemoires' => $latestMemoires,
+            'latestRecus' => $latestRecus,
+            'latestStudents' => $latestStudents,
+            'latestTeachers' => $latestTeachers,
+            'latestSoutenances' => $latestSoutenances,
+            'latestPdfs' => $latestPdfs,
+            'students' => $students,
+            'teachers' => $teachers,
+            'memoires' => $memoires,
+            'soutenances' => $soutenances,
+            'recus' => $recus,
+            'studentsList' => $studentsList,
+            'teachersList' => $teachersList,
+            'filieres' => $filieres,
+            'coursesList' => $coursesList,
+            'users' => $users,
+        ]);
     }
 
     public function updateUserRole(Request $request, User $user)
@@ -156,6 +157,10 @@ class DashboardController extends Controller
 
         $course = Course::findOrFail($data['course_id']);
         $course->teachers()->syncWithoutDetaching([$data['teacher_id']]);
+
+        if ($request->wantsJson()) {
+            return response()->json(['ok' => true]);
+        }
 
         return back()->with('success', 'Cours assigne a l\'enseignant.');
     }

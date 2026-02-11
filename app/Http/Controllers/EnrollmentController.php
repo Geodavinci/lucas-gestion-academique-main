@@ -6,6 +6,7 @@ use App\Models\Enrollment;
 use App\Models\Filiere;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class EnrollmentController extends Controller
 {
@@ -13,7 +14,9 @@ class EnrollmentController extends Controller
     {
         $enrollments = Enrollment::with(['student', 'filiere'])->orderByDesc('created_at')->get();
 
-        return view('enrollments.index', compact('enrollments'));
+        return Inertia::render('Enrollments/Index', [
+            'enrollments' => $enrollments,
+        ]);
     }
 
     public function create()
@@ -21,7 +24,10 @@ class EnrollmentController extends Controller
         $students = Student::orderBy('nom')->orderBy('prenom')->get();
         $filieres = Filiere::orderBy('nom')->get();
 
-        return view('enrollments.create', compact('students', 'filieres'));
+        return Inertia::render('Enrollments/Create', [
+            'students' => $students,
+            'filieres' => $filieres,
+        ]);
     }
 
     public function store(Request $request)

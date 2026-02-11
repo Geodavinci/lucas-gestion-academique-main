@@ -10,16 +10,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('auth.register');
+        return Inertia::render('Auth/Register');
     }
 
     /**
@@ -30,8 +31,8 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -45,15 +46,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        $role = $user->role ?? 'user';
-        if ($role === 'admin') {
-            $target = route('dashboard', absolute: false);
-        } elseif ($role === 'teacher') {
-            $target = route('teacher.dashboard', absolute: false);
-        } else {
-            $target = route('student.profile', absolute: false);
-        }
-
-        return redirect($target);
+        return redirect(route('dashboard', absolute: false));
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Enrollment;
 use App\Models\Grade;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class GradeController extends Controller
 {
@@ -36,7 +37,11 @@ class GradeController extends Controller
             ->get()
             ->keyBy(fn ($g) => $g->student_id . '|' . $g->session);
 
-        return view('grades.create', compact('course', 'students', 'existingGrades'));
+        return Inertia::render('Grades/Create', [
+            'course' => $course,
+            'students' => $students,
+            'existingGrades' => $existingGrades->values(),
+        ]);
     }
 
     public function store(Request $request, Course $course)

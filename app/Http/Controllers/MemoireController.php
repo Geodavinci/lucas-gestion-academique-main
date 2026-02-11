@@ -6,6 +6,7 @@ use App\Models\Memoire;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class MemoireController extends Controller
 {
@@ -26,14 +27,20 @@ class MemoireController extends Controller
 
         $memoires = $memoiresQuery->paginate(10)->withQueryString();
 
-        return view('memoires.index', compact('memoires', 'annee', 'search'));
+        return Inertia::render('Memoires/Index', [
+            'memoires' => $memoires,
+            'annee' => $annee,
+            'search' => $search,
+        ]);
     }
 
     public function create()
     {
         $students = Student::query()->orderBy('nom')->orderBy('prenom')->get();
 
-        return view('memoires.create', compact('students'));
+        return Inertia::render('Memoires/Create', [
+            'students' => $students,
+        ]);
     }
 
     public function store(Request $request)
@@ -56,6 +63,10 @@ class MemoireController extends Controller
 
     public function download(Memoire $memoire)
     {
+        if (!$memoire->fichier_pdf || !Storage::disk('public')->exists($memoire->fichier_pdf)) {
+            abort(404, 'Fichier introuvable.');
+        }
+
         return Storage::disk('public')->download($memoire->fichier_pdf);
     }
 
@@ -82,6 +93,10 @@ class MemoireController extends Controller
 
         $memoires = $memoiresQuery->get();
 
-        return view('memoires.by-student', compact('student', 'memoires', 'annee'));
+        return Inertia::render('Memoires/ByStudent', [
+            'student' => $student,
+            'memoires' => $memoires,
+            'annee' => $annee,
+        ]);
     }
 }

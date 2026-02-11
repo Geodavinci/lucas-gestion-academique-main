@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Filiere;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CourseController extends Controller
 {
@@ -12,7 +13,9 @@ class CourseController extends Controller
     {
         $courses = Course::with('filiere')->orderBy('nom')->get();
 
-        return view('courses.index', compact('courses'));
+        return Inertia::render('Courses/Index', [
+            'courses' => $courses,
+        ]);
     }
 
     public function create()
@@ -21,7 +24,10 @@ class CourseController extends Controller
 
         $teachers = \App\Models\Teacher::orderBy('nom')->orderBy('prenom')->get();
 
-        return view('courses.create', compact('filieres', 'teachers'));
+        return Inertia::render('Courses/Create', [
+            'filieres' => $filieres,
+            'teachers' => $teachers,
+        ]);
     }
 
     public function store(Request $request)
@@ -46,7 +52,11 @@ class CourseController extends Controller
 
         $teachers = \App\Models\Teacher::orderBy('nom')->orderBy('prenom')->get();
 
-        return view('courses.edit', compact('course', 'filieres', 'teachers'));
+        return Inertia::render('Courses/Edit', [
+            'course' => $course->load('teachers'),
+            'filieres' => $filieres,
+            'teachers' => $teachers,
+        ]);
     }
 
     public function update(Request $request, Course $course)
