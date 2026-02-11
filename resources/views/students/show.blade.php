@@ -7,7 +7,7 @@
         <p class="text-sm text-slate-600">Matricule: {{ $student->matricule }}</p>
     </div>
     <div class="flex gap-3">
-        <a href="{{ route('memoires.byStudent', $student) }}" class="rounded bg-slate-900 text-white px-4 py-2 text-sm">Voir memoires</a>
+        <a href="{{ route('students.memoires', $student)}}" class="rounded bg-slate-900 text-white px-4 py-2 text-sm">Voir memoires</a>
         <a href="{{ route('soutenances.createForStudent', $student) }}" class="rounded bg-emerald-600 text-white px-4 py-2 text-sm">Ajouter soutenance</a>
         <a href="{{ route('students.edit', $student) }}" class="rounded border border-slate-300 px-4 py-2 text-sm">Modifier</a>
     </div>
@@ -44,10 +44,7 @@
         <label class="block text-sm font-medium">Recherche</label>
         <input name="q" value="{{ request('q') }}" class="mt-1 w-56 rounded border-slate-300" placeholder="Titre du memoire" />
     </div>
-    <div>
-        <label class="block text-sm font-medium">Filtrer par annee</label>
-        <input name="annee" value="{{ $annee }}" class="mt-1 w-40 rounded border-slate-300" />
-    </div>
+   
     <button class="rounded border border-slate-300 px-3 py-2 text-sm">Filtrer</button>
 </form>
 

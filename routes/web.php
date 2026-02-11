@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/teacher/courses/{course}/grades', [GradeController::class, 'create'])->name('grades.create');
     Route::post('/teacher/courses/{course}/grades', [GradeController::class, 'store'])->name('grades.store');
 
-    Route::resource('students', StudentController::class);
+    
     Route::get('students/{student}/memoires', [MemoireController::class, 'byStudent'])
         ->name('memoires.byStudent');
 
