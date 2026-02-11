@@ -69,7 +69,17 @@ class StudentController extends Controller
     public function show($id)
     {
         $student = Student::findOrFail($id);
-        return view('students.show', compact('student'));
+
+        $search = request()->query('q');
+
+        $memoiresQuery = $student->memoires()->orderByDesc('annee');
+        if ($search) {
+            $memoiresQuery->where('titre', 'like', '%' . $search . '%');
+        }
+        $memoires = $memoiresQuery->get();
+        $recus = $student->recuPaiements()->orderByDesc('date_paiement')->get();
+
+        return view('students.show', compact('student', 'memoires', 'recus', 'search'));
     }
 
     /**
