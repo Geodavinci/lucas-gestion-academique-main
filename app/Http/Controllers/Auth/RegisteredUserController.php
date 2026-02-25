@@ -46,7 +46,13 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         $role = $user->role ?? 'user';
-        $target = $role === 'admin' ? route('dashboard', absolute: false) : route('student.profile', absolute: false);
+        if ($role === 'admin') {
+            $target = route('dashboard', absolute: false);
+        } elseif ($role === 'teacher') {
+            $target = route('teacher.dashboard', absolute: false);
+        } else {
+            $target = route('student.profile', absolute: false);
+        }
 
         return redirect($target);
     }

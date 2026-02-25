@@ -253,6 +253,35 @@
                     </div>
                 </div>
 
+                <!-- Filiere Cards -->
+                <div class="{{ $card }}">
+                    <div class="{{ $cardHeader }}">
+                        <div>
+                            <h2 class="text-lg font-semibold text-slate-900">Filières & effectifs</h2>
+                            <p class="text-sm text-slate-500">Nombre d'étudiants par filière</p>
+                        </div>
+                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.105 0-2 .895-2 2v2H8a2 2 0 100 4h8a2 2 0 100-4h-2v-2c0-1.105-.895-2-2-2z"/>
+                        </svg>
+                    </div>
+                    <div class="{{ $cardBody }}">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            @foreach ($filieres as $filiere)
+                                <div class="rounded-xl border border-slate-200 bg-white p-4">
+                                    <div class="text-sm font-semibold text-slate-900">{{ $filiere->nom }}</div>
+                                    <div class="text-xs text-slate-500">{{ $filiere->code }}</div>
+                                    <div class="mt-3 text-2xl font-semibold text-slate-900">{{ $filiere->enrollments_count }}</div>
+                                    <div class="text-xs text-slate-500">étudiants</div>
+                                    <a href="{{ route('students.index', ['filiere' => $filiere->nom]) }}"
+                                       class="mt-3 inline-flex items-center text-xs font-medium text-slate-700 hover:text-slate-900">
+                                        Voir les étudiants →
+                                    </a>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Recent Activity Grid -->
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     <!-- Recent Students -->
@@ -497,7 +526,8 @@
                                         <tr class="text-left text-slate-600">
                                             <th class="px-4 py-3 font-medium">Utilisateur</th>
                                             <th class="px-4 py-3 font-medium">Rôle</th>
-                                            <th class="px-4 py-3 font-medium text-right">Actions</th>
+                                            <th class="px-4 py-3 font-medium text-right">Étudiant lié</th>
+                                            <th class="px-4 py-3 font-medium text-right">Enseignant lié</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
@@ -515,6 +545,7 @@
                                                     <select name="role" x-model="role"
                                                             class="rounded-lg border-slate-300 text-sm focus:border-slate-400 focus:ring-2 focus:ring-slate-200">
                                                         <option value="user">Utilisateur</option>
+                                                        <option value="teacher">Enseignant</option>
                                                         <option value="admin">Administrateur</option>
                                                     </select>
                                                     <button type="submit" 
@@ -543,10 +574,30 @@
                                                     </button>
                                                 </form>
                                             </td>
+                                            <td class="px-4 py-3 text-right">
+                                                <form method="POST" action="{{ route('admin.users.teacher', $user) }}" 
+                                                      class="inline-flex items-center gap-2">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <select name="teacher_id" 
+                                                            class="rounded-lg border-slate-300 text-sm focus:border-slate-400 focus:ring-2 focus:ring-slate-200">
+                                                        <option value="">Lier un enseignant</option>
+                                                        @foreach ($teachersList as $teacher)
+                                                            <option value="{{ $teacher->id }}" @selected($user->teacher?->id === $teacher->id)>
+                                                                {{ $teacher->nom }} {{ $teacher->prenom }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    <button type="submit" 
+                                                            class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:border-slate-400">
+                                                        Lier
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                         @empty
                                         <tr>
-                                            <td class="px-4 py-6 text-center text-slate-500" colspan="3">
+                                            <td class="px-4 py-6 text-center text-slate-500" colspan="4">
                                                 Aucun utilisateur à gérer
                                             </td>
                                         </tr>
@@ -558,6 +609,41 @@
                     </div>
                     @endif
                 </div>
+
+                @if (auth()->user() && auth()->user()->role === 'admin')
+                <div class="{{ $card }}">
+                    <div class="{{ $cardHeader }}">
+                        <h2 class="text-lg font-semibold text-slate-900">Assigner un cours à un enseignant</h2>
+                        <span class="text-xs bg-slate-900 text-white px-2 py-1 rounded-full">Admin</span>
+                    </div>
+                    <div class="{{ $cardBody }}">
+                        <form method="POST" action="{{ route('admin.courses.assign') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @csrf
+                            <div>
+                                <label class="block text-sm font-medium">Cours</label>
+                                <select name="course_id" class="mt-1 w-full rounded border-slate-300">
+                                    <option value="">Sélectionner un cours</option>
+                                    @foreach ($coursesList as $course)
+                                        <option value="{{ $course->id }}">{{ $course->nom }} ({{ $course->filiere?->code }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium">Enseignant</label>
+                                <select name="teacher_id" class="mt-1 w-full rounded border-slate-300">
+                                    <option value="">Sélectionner un enseignant</option>
+                                    @foreach ($teachersList as $teacher)
+                                        <option value="{{ $teacher->id }}">{{ $teacher->nom }} {{ $teacher->prenom }} ({{ $teacher->specialite }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="md:col-span-2">
+                                <button class="rounded bg-slate-900 text-white px-4 py-2 text-sm">Assigner</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <!-- Students Tab -->

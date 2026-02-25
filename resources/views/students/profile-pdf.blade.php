@@ -54,5 +54,33 @@
             <div class="row">Aucune soutenance enregistree.</div>
         @endif
     </div>
+
+    <div class="section">
+        <h2>Notes</h2>
+        @if ($student->grades->isNotEmpty())
+            <table width="100%" cellspacing="0" cellpadding="4" border="1" style="border-collapse: collapse; font-size: 11px;">
+                <thead>
+                    <tr>
+                        <th align="left">Cours</th>
+                        <th align="left">Code</th>
+                        <th align="left">Note</th>
+                        <th align="left">Session</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($student->grades as $grade)
+                        <tr>
+                            <td>{{ $grade->course?->nom }}</td>
+                            <td>{{ $grade->course?->code }}</td>
+                            <td>{{ $grade->note }}</td>
+                            <td>{{ $grade->session }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <div class="row">Aucune note disponible.</div>
+        @endif
+    </div>
 </body>
 </html>
