@@ -15,6 +15,7 @@ class Memoire extends Model
         'titre',
         'annee',
         'fichier_pdf',
+        'fichier_pdf_corrige',
     ];
 
 

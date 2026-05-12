@@ -51,6 +51,13 @@
                             Aucun fichier
                         @endif
                     </div>
+                    <div><span class="text-slate-500">Fichier corrigé:</span>
+                        @if ($memoire->fichier_pdf_corrige)
+                            <a href="{{ route('memoires.download.corrige', $memoire) }}" class="text-slate-700">Voir corrigé</a>
+                        @else
+                            Aucun fichier corrigé
+                        @endif
+                    </div>
                 </div>
             @else
                 <p class="text-sm text-slate-500">Aucun memoire enregistre.</p>

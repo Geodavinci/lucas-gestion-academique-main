@@ -48,7 +48,14 @@
                         <td class="px-4 py-3">{{ $memoire->student?->nom }} {{ $memoire->student?->prenom }}</td>
                         <td class="px-4 py-3">{{ $memoire->annee }}</td>
                         <td class="px-4 py-3 text-right space-x-2">
-                            <a href="{{ route('memoires.download', $memoire) }}" class="text-slate-700">PDF</a>
+                            @if ($memoire->fichier_pdf)
+                                <a href="{{ route('memoires.download', $memoire) }}" class="text-slate-700">PDF</a>
+                            @else
+                                <span class="text-slate-500">Aucun PDF</span>
+                            @endif
+                            @if (auth()->user()?->role === 'admin')
+                                <a href="{{ route('memoires.edit', $memoire) }}" class="text-slate-700">Modifier</a>
+                            @endif
                             <form method="POST" action="{{ route('memoires.destroy', $memoire) }}" class="inline">
                                 @csrf
                                 @method('DELETE')

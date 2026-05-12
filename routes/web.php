@@ -39,6 +39,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('memoires/{memoire}/download', [MemoireController::class, 'download'])
         ->name('memoires.download');
+    Route::get('memoires/{memoire}/download/corrige', [MemoireController::class, 'downloadCorrige'])
+        ->name('memoires.download.corrige');
     Route::resource('memoires', MemoireController::class)
         ->except(['show', 'edit', 'update']);
 
@@ -118,6 +120,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::post('/memoires', [MemoireController::class, 'store'])
         ->name('memoires.store');
+
+    Route::get('/memoires/{memoire}/edit', [MemoireController::class, 'edit'])
+        ->name('memoires.edit');
+
+    Route::match(['put', 'patch'], '/memoires/{memoire}', [MemoireController::class, 'update'])
+        ->name('memoires.update');
 
     Route::patch('/admin/users/{user}/role', [DashboardController::class, 'updateUserRole'])
         ->name('admin.users.role');
