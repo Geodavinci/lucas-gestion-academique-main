@@ -1,10 +1,10 @@
 # Ce qu'on a fait sur Lucas Gestion Académique
 
-Salut ! Voici un résumé de tout ce qu'on a modifié et arrangé sur le projet. C'était pas mal de boulot mais ça valait le coup.
+Salut ! Voici un résumé de tout ce qu'on a modifié et arrangé sur le projet. C'était pas mal de boulot mais ça valait vraiment le coup.
 
 ## Les problèmes qu'on a rencontrés
 
-### 1. Les formulaires de connexion qui se battaient
+### 1. Les formulaires de connexion en doublon
 Le truc bizarre c'était que dans les pages login et register, il y avait deux formulaires chacun :
 - Un en anglais (Breeze)
 - Un en français (le nôtre)
@@ -26,7 +26,7 @@ Il y avait une migration qui essayait d'ajouter une colonne user_id à une table
 **Fichier créé :**
 - `database/migrations/2026_01_27_145200_create_students_table.php`
 
-**Ce qu'elle fait :**
+**Ce qu'elle contient :**
 ```php
 Schema::create('students', function (Blueprint $table) {
     $table->id();
@@ -43,62 +43,62 @@ Schema::create('students', function (Blueprint $table) {
 });
 ```
 
-### 3. Table recu_paiements qui manquait aussi
-Pareil, une migration faisait référence à une table qui existait pas.
+### 3. Table recu_paiements manquante aussi
+Pareil, une migration faisait référence à une table qui n'existait pas.
 
-**Solution :** Création complète de la table.
+**Solution :** On a créé la table complète.
 
 **Fichier créé :**
 - `database/migrations/2026_01_27_145300_create_recu_paiements_table.php`
 
 ### 4. Téléchargement de PDF qui crashait
-Quand on essayait de télécharger un mémoire sans fichier PDF, ça plantait avec une erreur.
+Quand on tentait de télécharger un mémoire sans fichier PDF, ça plantait.
 
-**Fix :** Ajout d'une vérification avant le téléchargement.
+**Fix :** On a ajouté une vérification avant le téléchargement.
 
 **Fichier modifié :**
 - `app/Http/Controllers/MemoireController.php`
 
-**Le code ajouté :**
+**Le code qu'on a mis :**
 ```php
 if (!$memoire->fichier_pdf) {
     return back()->with('error', 'Aucun fichier PDF trouvé pour ce mémoire.');
 }
 ```
 
-### 5. Edition des mémoires impossible
-Pas de page pour modifier les mémoires existants.
+### 5. Pas de page d'édition des mémoires
+On pouvait pas modifier les mémoires une fois créés.
 
-**Solution :** Création d'une page edit et mise à jour du contrôleur.
+**Solution :** On a créé une page edit et mis à jour le contrôleur.
 
 **Fichiers créés/modifiés :**
 - `resources/views/memoires/edit.blade.php`
-- `app/Http/Controllers/MemoireController.php` (méthodes edit() et update())
+- `app/Http/Controllers/MemoireController.php` (ajout de edit() et update())
 
-### 6. Version corrigée des mémoires
-Les profs pouvaient pas uploader la version corrigée.
+### 6. Pas de support pour la version corrigée
+Les profs pouvaient pas uploader une version corrigée après la première.
 
-**Solution :** Ajout du champ `fichier_pdf_corrige` et migration associée.
+**Solution :** Ajout du champ `fichier_pdf_corrige` et sa migration.
 
 **Fichiers modifiés :**
 - `app/Models/Memoire.php`
 - `database/migrations/2026_05_12_220500_add_fichier_pdf_corrige_to_memoires_table.php`
 
-## Les commandes qu'on a utilisées
+## Les commandes qu'on a exécutées
 
-Pour les migrations :
+Migrations :
 ```bash
 php artisan migrate
 php artisan migrate:status
 ```
 
-Pour vérifier le code :
+Vérification du code :
 ```bash
 php -l app/Http/Controllers/MemoireController.php
 php artisan route:list --name=memoires
 ```
 
-Pour Git :
+Git :
 ```bash
 git checkout -b ahmadou
 git add .
@@ -106,7 +106,7 @@ git commit -m "Fix: formulaire doublon + table students manquante"
 git commit -m "Add: edition memoires + version corrigee"
 ```
 
-## Les routes ajoutées
+## Les routes qu'on a ajoutées
 
 ```php
 // Edition mémoires
@@ -117,16 +117,16 @@ Route::match(['put', 'patch'], '/memoires/{memoire}', [MemoireController::class,
 Route::get('memoires/{memoire}/download/corrige', [MemoireController::class, 'downloadCorrige'])->name('memoires.download.corrige');
 ```
 
-## Ce qui fonctionne maintenant
+## Ce qui marche maintenant
 
 ✅ Création d'étudiants sans erreur
 ✅ Création de reçus de paiement
 ✅ Téléchargement sécurisé des PDFs
-✅ Edition des mémoires par l'admin
+✅ Édition des mémoires par l'admin
 ✅ Upload de versions corrigées
-✅ Authentification propre (plus de doublons)
+✅ Authentification sans doublons
 
-Voilà, c'était un peu chaotique au début mais maintenant ça roule !
+C'était un peu compliqué au début mais maintenant tout roule !
     $table->timestamps();
 });
 ```
