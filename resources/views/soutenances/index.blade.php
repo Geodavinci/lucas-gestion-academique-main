@@ -1,95 +1,142 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <div>
-        <h1 class="text-2xl font-semibold">Soutenances</h1>
-        <p class="text-sm text-slate-600">Historique des soutenances.</p>
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-orange-600 via-rose-500 to-pink-500 bg-clip-text text-transparent">Soutenances</h1>
+            <p class="mt-2 text-gray-600 text-lg">Historique complet et gestion des soutenances</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="{{ route('soutenances.export', request()->query()) }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold">
+                <x-icon name="download" size="sm" class="w-4 h-4" />
+                Exporter CSV
+            </a>
+            <a href="{{ route('soutenances.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold hover:from-orange-700 hover:to-rose-800">
+                <x-icon name="plus-circle" size="sm" class="w-5 h-5" />
+                Ajouter une soutenance
+            </a>
+        </div>
     </div>
-    <div class="flex gap-2">
-        <a href="{{ route('soutenances.export', request()->query()) }}" class="inline-flex items-center rounded border border-slate-300 px-4 py-2 text-sm">Exporter CSV</a>
-        <a href="{{ route('soutenances.create') }}" class="inline-flex items-center rounded bg-slate-900 text-white px-4 py-2 text-sm">Ajouter</a>
-    </div>
-</div>
 
+    <!-- Filters -->
+    <form method="GET" class="bg-white rounded-2xl shadow-md border border-gray-100/50 p-6 backdrop-blur-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+                <x-input-label for="q" class="text-sm font-semibold text-gray-700">Recherche</x-input-label>
+                <x-text-input
+                    id="q"
+                    name="q"
+                    value="{{ request('q') }}"
+                    placeholder="Nom de l'étudiant..."
+                    class="mt-2 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    @change="$el.closest('form').submit()"
+                />
+            </div>
+            <div>
+                <x-input-label for="statut" class="text-sm font-semibold text-gray-700">Statut</x-input-label>
+                <select name="statut" class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white" @change="$el.closest('form').submit()">
+                    <option value="">Tous</option>
+                    <option value="Valide" @selected(request('statut') == 'Valide')>Validée</option>
+                    <option value="Ajourne" @selected(request('statut') == 'Ajourne')>Ajournée</option>
+                </select>
+            </div>
+            <div>
+                <x-input-label for="date" class="text-sm font-semibold text-gray-700">Date</x-input-label>
+                <x-text-input
+                    id="date"
+                    name="date"
+                    type="date"
+                    value="{{ request('date') }}"
+                    class="mt-2 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                    @change="$el.closest('form').submit()"
+                />
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-2.5 rounded-xl hover:shadow-lg hover:from-orange-700 hover:to-rose-800 active:scale-95 transition-all duration-200 font-semibold">
+                <x-icon name="search" size="sm" class="w-4 h-4" />
+                Filtrer
+            </button>
+            <a href="{{ route('soutenances.index') }}" class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-6 py-2.5 rounded-xl hover:bg-gray-200 transition-all duration-200 font-semibold border border-gray-300">
+                Réinitialiser
+            </a>
+        </div>
+    </form>
 
-<form method="GET" class="mb-4 flex flex-wrap items-end gap-3">
-    <div>
-        <label class="block text-sm font-medium">Recherche</label>
-        <input name="q" value="{{ $search ?? '' }}" class="mt-1 w-56 rounded border-slate-300" placeholder="Etudiant" />
-    </div>
-    <div>
-        <label class="block text-sm font-medium">Statut</label>
-        <select name="statut" class="mt-1 w-40 rounded border-slate-300">
-            <option value="">Tous</option>
-            <option value="Valide" @selected(($statut ?? '') == 'Valide')>Valide</option>
-            <option value="Ajourne" @selected(($statut ?? '') == 'Ajourne')>Ajourne</option>
-        </select>
-    </div>
-    <div>
-        <label class="block text-sm font-medium">Date</label>
-        <input type="date" name="date" value="{{ $date ?? '' }}" class="mt-1 w-44 rounded border-slate-300" />
-    </div>
-    
-    <div>
-        <label class="block text-sm font-medium">Directeur</label>
-        <input name="directeur_memoire" value="{{ $directeur_memoire ?? '' }}" class="mt-1 w-44 rounded border-slate-300" placeholder="Nom" />
-    </div>
-    <div>
-        <label class="block text-sm font-medium">Evaluateur</label>
-        <input name="evaluateur" value="{{ $evaluateur ?? '' }}" class="mt-1 w-44 rounded border-slate-300" placeholder="Nom" />
-    </div>
-    <div>
-        <label class="block text-sm font-medium">President jury</label>
-        <input name="president_jury" value="{{ $president_jury ?? '' }}" class="mt-1 w-44 rounded border-slate-300" placeholder="Nom" />
-    </div>
-    <button class="rounded border border-slate-300 px-3 py-2 text-sm">Filtrer</button>
-    <a href="{{ route('soutenances.index') }}" class="rounded border border-slate-300 px-3 py-2 text-sm">Reinitialiser</a>
-</form>
-<div class="bg-white shadow-sm rounded border border-slate-200">
-    <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-slate-600">
-            <tr>
-                <th class="text-left px-4 py-3">Date</th>
-                <th class="text-left px-4 py-3">Statut</th>
-                <th class="text-left px-4 py-3">Description</th>
-                <th class="text-left px-4 py-3">Etudiant</th>
-                <th class="text-left px-4 py-3">Directeur</th>
-                <th class="text-left px-4 py-3">Evaluateur</th>
-                <th class="text-left px-4 py-3">President jury</th>
-                <th class="text-right px-4 py-3">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($soutenances as $soutenance)
-                <tr class="border-t">
-                    <td class="px-4 py-3">{{ $soutenance->date_soutenance }}</td>
-                    <td class="px-4 py-3">{{ $soutenance->statut }}</td>
-                    <td class="px-4 py-3">{{ $soutenance->description ? \Illuminate\Support\Str::limit($soutenance->description, 40) : '-' }}</td>
-                    <td class="px-4 py-3">{{ $soutenance->student?->nom }} {{ $soutenance->student?->prenom }}</td>
-                    <td class="px-4 py-3">{{ $soutenance->directeurMemoire?->nom }} {{ $soutenance->directeurMemoire?->prenom }}</td>
-                    <td class="px-4 py-3">{{ $soutenance->evaluateurTeacher?->nom }} {{ $soutenance->evaluateurTeacher?->prenom }}</td>
-                    <td class="px-4 py-3">{{ $soutenance->presidentJury?->nom }} {{ $soutenance->presidentJury?->prenom }}</td>
-                    <td class="px-4 py-3 text-right space-x-2">
-                        <a href="{{ route('soutenances.show', $soutenance) }}" class="text-slate-700 hover:text-slate-900">Voir</a>
-                        <a href="{{ route('soutenances.edit', $soutenance) }}" class="text-slate-700 hover:text-slate-900">Modifier</a>
-                        <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-rose-600 hover:text-rose-700" onclick="return confirm('Supprimer cette soutenance ?')">Supprimer</button>
-                        </form>
-                    </td>
+    <!-- Table -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-gradient-to-r from-orange-50 via-white to-rose-50 border-b-2 border-orange-100">
+                <tr>
+                    <th class="text-left px-6 py-4 font-bold text-orange-900 text-xs uppercase tracking-widest">Date</th>
+                    <th class="text-left px-6 py-4 font-bold text-orange-900 text-xs uppercase tracking-widest">Étudiant</th>
+                    <th class="text-left px-6 py-4 font-bold text-orange-900 text-xs uppercase tracking-widest">Statut</th>
+                    <th class="text-left px-6 py-4 font-bold text-orange-900 text-xs uppercase tracking-widest">Directeur</th>
+                    <th class="text-right px-6 py-4 font-bold text-orange-900 text-xs uppercase tracking-widest">Actions</th>
                 </tr>
-            @empty
-                <tr class="border-t">
-                    <td class="px-4 py-6 text-center text-slate-500" colspan="9">Aucune soutenance enregistree.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @forelse ($soutenances as $soutenance)
+                    <tr class="hover:bg-orange-50 hover:border-l-4 hover:border-l-orange-500 transition-all duration-200 group">
+                        <td class="px-6 py-4 text-gray-600 text-sm font-semibold">{{ $soutenance->date_soutenance?->format('d/m/Y') }}</td>
+                        <td class="px-6 py-4 font-bold text-gray-900 text-sm">{{ $soutenance->student?->nom }} {{ $soutenance->student?->prenom }}</td>
+                        <td class="px-6 py-4 text-sm">
+                            <span class="inline-flex items-center px-4 py-2 rounded-full text-xs font-bold {{ $soutenance->statut == 'Valide' ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border border-green-200' : 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border border-amber-200' }}">
+                                {{ $soutenance->statut ?? '-' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600 text-sm">{{ $soutenance->directeurMemoire?->nom }} {{ $soutenance->directeurMemoire?->prenom }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('soutenances.show', $soutenance) }}" class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Voir">
+                                    <x-icon name="eye" size="sm" class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Voir</span>
+                                </a>
+                                <a href="{{ route('soutenances.edit', $soutenance) }}" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Modifier">
+                                    <x-icon name="pencil" size="sm" class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Modifier</span>
+                                </a>
+                                <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette soutenance ?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Supprimer">
+                                        <x-icon name="trash" size="sm" class="w-4 h-4" />
+                                        <span class="hidden sm:inline">Supprimer</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-20 text-center">
+                            <div class="flex flex-col items-center gap-6">
+                                <div class="bg-gradient-to-br from-orange-100 to-rose-100 rounded-full p-6">
+                                    <x-icon name="calendar" size="lg" class="w-12 h-12 text-orange-600" />
+                                </div>
+                                <div>
+                                    <p class="text-gray-900 font-bold text-lg">Aucune soutenance enregistrée</p>
+                                    <p class="text-gray-600 text-sm mt-2">Il n'y a pas encore de soutenances dans le système</p>
+                                </div>
+                                <a href="{{ route('soutenances.create') }}" class="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold">
+                                    <x-icon name="plus-circle" size="sm" class="w-5 h-5" />
+                                    Ajouter une soutenance
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 
-<div class="mt-6">
-    {{ $soutenances->links() }}
+    <!-- Pagination -->
+    @if ($soutenances->hasPages())
+        <div class="flex justify-center">
+            {{ $soutenances->links('vendor/pagination/custom') }}
+        </div>
+    @endif
 </div>
 @endsection

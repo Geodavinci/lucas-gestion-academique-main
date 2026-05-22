@@ -8,64 +8,79 @@ use App\Models\RecuPaiement;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\User;
+use App\Services\AnalyticsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $stats = [
-            'students' => Student::count(),
-            'teachers' => Teacher::count(),
-            'memoires' => Memoire::count(),
-            'soutenances' => Soutenance::count(),
-            'recus' => RecuPaiement::count(),
-        ];
+        $user = auth()->user();
 
-        $latestMemoires = Memoire::with('student')->orderByDesc('created_at')->take(5)->get();
-        $latestRecus = RecuPaiement::with('student')->orderByDesc('date_paiement')->take(5)->get();
-        $latestStudents = Student::orderByDesc('created_at')->take(5)->get();
-        $latestTeachers = Teacher::orderByDesc('created_at')->take(5)->get();
-        $latestSoutenances = Soutenance::with('student')
-            ->orderByDesc('date_soutenance')
-            ->take(5)
-            ->get();
-        $latestPdfs = Memoire::with('student')
-            ->whereNotNull('fichier_pdf')
-            ->orderByDesc('created_at')
-            ->take(5)
-            ->get();
-        $students = Student::orderByDesc('created_at')->take(10)->get();
-        $teachers = Teacher::orderByDesc('created_at')->take(10)->get();
-        $memoires = Memoire::with('student')->orderByDesc('created_at')->take(10)->get();
-        $soutenances = Soutenance::with(['student', 'directeurMemoire', 'evaluateurTeacher', 'presidentJury'])
-            ->orderByDesc('date_soutenance')
-            ->take(10)
-            ->get();
-        $recus = RecuPaiement::with('student')->orderByDesc('date_paiement')->take(10)->get();
-        $studentsList = Student::orderBy('nom')->orderBy('prenom')->get();
-        $teachersList = Teacher::orderBy('nom')->orderBy('prenom')->get();
-        $users = auth()->user()?->role === 'admin'
-            ? User::with('student')->orderBy('name')->get()
-            : collect();
+        // Admin dashboard with analytics
+        if ($user->role === 'admin') {
+            $stats = Cache::remember('dashboard.admin.stats', 300, fn() => AnalyticsService::getAdminStats());
 
-        return view('dashboard', compact(
-            'stats',
-            'latestMemoires',
-            'latestRecus',
-            'latestStudents',
-            'latestTeachers',
-            'latestSoutenances',
-            'latestPdfs',
-            'students',
-            'teachers',
-            'memoires',
-            'soutenances',
-            'recus',
-            'studentsList',
-            'teachersList',
-            'users'
-        ));
+            $memoiresByFiliereData = Cache::remember('dashboard.memoires.filiere', 300, fn() => AnalyticsService::getMemoiresByFiliereData());
+            $memoiresByNiveauData = Cache::remember('dashboard.memoires.niveau', 300, fn() => AnalyticsService::getMemoiresByNiveauData());
+            $studentsByFiliereData = Cache::remember('dashboard.students.filiere', 300, fn() => AnalyticsService::getStudentCountByFiliere());
+            $soutenancesByMonthData = Cache::remember('dashboard.soutenances.month', 300, fn() => AnalyticsService::getSoutenancesByMonth());
+            $teacherWorkloadData = Cache::remember('dashboard.teachers.workload', 300, fn() => AnalyticsService::getTeacherWorkload());
+
+            $latestMemoires = Memoire::with('student')->orderByDesc('created_at')->take(5)->get();
+            $latestSoutenances = Soutenance::with('student')
+                ->orderByDesc('date_soutenance')
+                ->take(5)
+                ->get();
+            $studentsList = Student::orderBy('nom')->orderBy('prenom')->get();
+
+            return view('dashboard.admin', compact(
+                'stats',
+                'memoiresByFiliereData',
+                'memoiresByNiveauData',
+                'studentsByFiliereData',
+                'soutenancesByMonthData',
+                'teacherWorkloadData',
+                'latestMemoires',
+                'latestSoutenances',
+                'studentsList'
+            ));
+        }
+
+        // Teacher dashboard
+        if ($user->role === 'teacher') {
+            $teacher = Teacher::where('user_id', $user->id)->first();
+
+            if ($teacher) {
+                $teacherStats = AnalyticsService::getTeacherStats($teacher->id);
+                $upcomingSoutenances = Soutenance::where(function ($q) use ($teacher) {
+                    $q->where('directeur_memoire_id', $teacher->id)
+                        ->orWhere('evaluateur_id', $teacher->id)
+                        ->orWhere('president_jury_id', $teacher->id);
+                })
+                    ->where('date_soutenance', '>=', now())
+                    ->orderBy('date_soutenance')
+                    ->take(10)
+                    ->get();
+
+                return view('dashboard.teacher', compact('teacherStats', 'upcomingSoutenances'));
+            }
+        }
+
+        // Student dashboard
+        if ($user->role === 'student') {
+            $student = $user->student;
+
+            if ($student) {
+                $studentStats = AnalyticsService::getStudentStats($student->id);
+
+                return view('dashboard.student', compact('studentStats'));
+            }
+        }
+
+        // Fallback
+        return view('dashboard');
     }
 
     public function updateUserRole(Request $request, User $user)

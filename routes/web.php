@@ -7,6 +7,7 @@ use App\Http\Controllers\SoutenanceController;
 use App\Http\Controllers\RecuPaiementController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentProfileController;
@@ -41,8 +42,15 @@ Route::middleware('auth')->group(function () {
         ->name('memoires.download');
     Route::get('memoires/{memoire}/download/corrige', [MemoireController::class, 'downloadCorrige'])
         ->name('memoires.download.corrige');
+
+    // Workflow routes
+    Route::post('memoires/{memoire}/submit', [MemoireController::class, 'submit'])->name('memoires.submit');
+    Route::patch('memoires/{memoire}/request-changes', [MemoireController::class, 'requestChanges'])->name('memoires.requestChanges');
+    Route::patch('memoires/{memoire}/approve', [MemoireController::class, 'approve'])->name('memoires.approve');
+    Route::patch('memoires/{memoire}/reject', [MemoireController::class, 'reject'])->name('memoires.reject');
+
     Route::resource('memoires', MemoireController::class)
-        ->except(['show', 'edit', 'update']);
+        ->except(['edit', 'update']);
 
     Route::resource('teachers', TeacherController::class);
     Route::get('students/{student}/soutenances/create', [SoutenanceController::class, 'createForStudent'])
@@ -55,6 +63,15 @@ Route::middleware('auth')->group(function () {
     Route::get('recu-paiements/export/csv', [RecuPaiementController::class, 'exportCsv'])
         ->name('recu-paiements.export');
     Route::resource('recu-paiements', RecuPaiementController::class);
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+    Route::get('/notifications/recent', [NotificationController::class, 'recent'])->name('notifications.recent');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'delete'])->name('notifications.delete');
+    Route::delete('/notifications', [NotificationController::class, 'deleteAll'])->name('notifications.deleteAll');
 });
 
 /*

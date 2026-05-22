@@ -516,7 +516,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
                                         @forelse ($users as $user)
-                                        <tr class="hover:bg-slate-50 transition-colors">
+                                        <tr class="hover:bg-slate-50 transition-colors duration-200">
                                             <td class="px-4 py-3">
                                                 <div class="font-medium text-slate-900">{{ $user->name }}</div>
                                                 <div class="text-xs text-slate-500">{{ $user->email }}</div>

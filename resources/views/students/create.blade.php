@@ -1,144 +1,142 @@
+@extends(‘layouts.app’)
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter un étudiant</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@section(‘content’)
+<!-- Breadcrumb -->
+<x-breadcrumb :items="[
+    [‘label’ => ‘Étudiants’, ‘url’ => route(‘students.index’)],
+    [‘label’ => ‘Ajouter un étudiant’]
+]" />
 
-    {{-- Bootstrap --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Header -->
+    <div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 bg-clip-text text-transparent">Ajouter un étudiant</h1>
+        <p class="mt-2 text-gray-600 text-lg">Remplissez les informations ci-dessous</p>
+    </div>
 
-<div class="container mt-5">
+    <!-- Form Card -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden">
+        <form method="POST" action="{{ route(‘students.store’) }}" class="p-8 space-y-6">
+            @csrf
 
-    <h3 class="text-center mb-4">
-        Enregistrement d’un étudiant
-    </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Matricule -->
+                <div>
+                    <x-input-label for="matricule" class="text-sm font-semibold text-gray-700">Matricule *</x-input-label>
+                    <x-text-input
+                        id="matricule"
+                        name="matricule"
+                        type="text"
+                        value="{{ old(‘matricule’) }}"
+                        placeholder="Ex: STU001"
+                        required
+                        class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <x-input-error :messages="$errors->get(‘matricule’)" />
+                </div>
 
-    {{-- Affichage des erreurs --}}
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+                <!-- Filière -->
+                <div>
+                    <x-input-label for="filiere" class="text-sm font-semibold text-gray-700">Filière *</x-input-label>
+                    <x-text-input
+                        id="filiere"
+                        name="filiere"
+                        type="text"
+                        value="{{ old(‘filiere’) }}"
+                        placeholder="Ex: Informatique"
+                        required
+                        class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <x-input-error :messages="$errors->get(‘filiere’)" />
+                </div>
 
-    <form action="{{ route('students.store') }}" method="POST">
-        @csrf
+                <!-- Nom -->
+                <div>
+                    <x-input-label for="nom" class="text-sm font-semibold text-gray-700">Nom *</x-input-label>
+                    <x-text-input
+                        id="nom"
+                        name="nom"
+                        type="text"
+                        value="{{ old(‘nom’) }}"
+                        placeholder="Ex: Dupont"
+                        required
+                        class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <x-input-error :messages="$errors->get(‘nom’)" />
+                </div>
 
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Matricule</label>
-                <input type="text" name="matricule" class="form-control" required>
+                <!-- Prénom -->
+                <div>
+                    <x-input-label for="prenom" class="text-sm font-semibold text-gray-700">Prénom *</x-input-label>
+                    <x-text-input
+                        id="prenom"
+                        name="prenom"
+                        type="text"
+                        value="{{ old(‘prenom’) }}"
+                        placeholder="Ex: Jean"
+                        required
+                        class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <x-input-error :messages="$errors->get(‘prenom’)" />
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <x-input-label for="email" class="text-sm font-semibold text-gray-700">Email *</x-input-label>
+                    <x-text-input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value="{{ old(‘email’) }}"
+                        placeholder="Ex: jean.dupont@email.com"
+                        required
+                        class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <x-input-error :messages="$errors->get(‘email’)" />
+                </div>
+
+                <!-- Téléphone -->
+                <div>
+                    <x-input-label for="telephone" class="text-sm font-semibold text-gray-700">Téléphone</x-input-label>
+                    <x-text-input
+                        id="telephone"
+                        name="telephone"
+                        type="text"
+                        value="{{ old(‘telephone’) }}"
+                        placeholder="Ex: +221 77 123 45 67"
+                        class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <x-input-error :messages="$errors->get(‘telephone’)" />
+                </div>
+
+                <!-- Niveau -->
+                <div>
+                    <x-input-label for="niveau" class="text-sm font-semibold text-gray-700">Niveau *</x-input-label>
+                    <select name="niveau" id="niveau" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        <option value="">-- Sélectionner un niveau --</option>
+                        <option value="BTS 1" @selected(old(‘niveau’) == ‘BTS 1’)>BTS 1</option>
+                        <option value="BTS 2" @selected(old(‘niveau’) == ‘BTS 2’)>BTS 2</option>
+                        <option value="Licence 1" @selected(old(‘niveau’) == ‘Licence 1’)>Licence 1</option>
+                        <option value="Licence 2" @selected(old(‘niveau’) == ‘Licence 2’)>Licence 2</option>
+                        <option value="Licence 3" @selected(old(‘niveau’) == ‘Licence 3’)>Licence 3</option>
+                        <option value="Master 1" @selected(old(‘niveau’) == ‘Master 1’)>Master 1</option>
+                        <option value="Master 2" @selected(old(‘niveau’) == ‘Master 2’)>Master 2</option>
+                    </select>
+                    <x-input-error :messages="$errors->get(‘niveau’)" />
+                </div>
             </div>
 
-            <div class="col-md-6">
-                <label class="form-label">Téléphone</label>
-                <input type="text" name="telephone" class="form-control">
+            <!-- Form Actions -->
+            <div class="pt-6 border-t border-gray-200 flex gap-3 justify-end">
+                <a href="{{ route(‘students.index’) }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-200 font-semibold">
+                    Annuler
+                </a>
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-lg hover:from-blue-700 hover:to-blue-800 active:scale-95 transition-all duration-200 font-semibold">
+                    <x-icon name="check" size="sm" class="w-4 h-4" />
+                    Enregistrer
+                </button>
             </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Nom</label>
-                <input type="text" name="nom" class="form-control" required>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Prénom</label>
-                <input type="text" name="prenom" class="form-control" required>
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" required>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label">Filière</label>
-                <input type="text" name="filiere" class="form-control" required>
-            </div>
-
-            <div class="col-md-6">
-                <label class="form-label">Niveau</label>
-                <select name="niveau" class="form-select" required>
-                    <option value="">-- Sélectionner --</option>
-                    <option value="BTS 1">BTS 1</option>
-                    <option value="BTS 2">BTS 2</option>
-                    <option value="Licence 1">Licence 1</option>
-                    <option value="Licence 2">Licence 2</option>
-                    <option value="Licence 3">Licence 3</option>
-                    <option value="Master 1">Master 1</option>
-                    <option value="Master 2">Master 2</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="text-center">
-            <button class="btn btn-success">
-                Enregistrer
-            </button>
-            <a href="{{ route('students.index') }}" class="btn btn-secondary">
-                Annuler
-            </a>
-        </div>
-
-    </form>
-
+        </form>
+    </div>
 </div>
-
-</body>
-</html>
-@extends('layouts.app')
-
-@section('content')
-<h1 class="text-2xl font-semibold mb-6">Nouvel etudiant</h1>
-
-<form method="POST" action="{{ route('students.store') }}" class="bg-white p-6 rounded border border-slate-200 shadow-sm space-y-4">
-    @csrf
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-            <label class="block text-sm font-medium">Matricule</label>
-            <input name="matricule" value="{{ old('matricule') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Filiere</label>
-            <input name="filiere" value="{{ old('filiere') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Nom</label>
-            <input name="nom" value="{{ old('nom') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Prenom</label>
-            <input name="prenom" value="{{ old('prenom') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Email</label>
-            <input type="email" name="email" value="{{ old('email') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Telephone</label>
-            <input name="telephone" value="{{ old('telephone') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-        <div>
-            <label class="block text-sm font-medium">Niveau</label>
-            <input name="niveau" value="{{ old('niveau') }}" class="mt-1 w-full rounded border-slate-300" />
-        </div>
-    </div>
-
-    <div class="pt-2">
-        <button type="submit" class="rounded bg-slate-900 text-white px-4 py-2 text-sm">Enregistrer</button>
-        <a href="{{ route('students.index') }}" class="ml-3 text-sm text-slate-600">Annuler</a>
-    </div>
-</form>
 @endsection
-

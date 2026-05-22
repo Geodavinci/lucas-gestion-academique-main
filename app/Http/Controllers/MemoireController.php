@@ -134,4 +134,69 @@ class MemoireController extends Controller
 
         return view('memoires.by-student', compact('student', 'memoires', 'annee'));
     }
+
+    public function show(Memoire $memoire)
+    {
+        return view('memoires.show', compact('memoire'));
+    }
+
+    public function submit(Memoire $memoire)
+    {
+        $this->authorize('update', $memoire);
+
+        if (!$memoire->canBeEdited()) {
+            return back()->withErrors(['message' => 'Ce mémoire ne peut pas être soumis.']);
+        }
+
+        $memoire->submit();
+
+        return back()->with('success', 'Mémoire soumis avec succès.');
+    }
+
+    public function review(Memoire $memoire)
+    {
+        $this->authorize('view', $memoire);
+
+        $memoire->markUnderReview();
+
+        return view('memoires.review', compact('memoire'));
+    }
+
+    public function requestChanges(Request $request, Memoire $memoire)
+    {
+        $this->authorize('update', $memoire);
+
+        $validated = $request->validate([
+            'review_notes' => 'required|string|min:10',
+        ]);
+
+        $memoire->requestChanges($validated['review_notes']);
+
+        return redirect()->route('memoires.index')
+            ->with('success', 'Corrections demandées. L\'étudiant sera notifié.');
+    }
+
+    public function approve(Memoire $memoire)
+    {
+        $this->authorize('update', $memoire);
+
+        $memoire->approve();
+
+        return redirect()->route('memoires.index')
+            ->with('success', 'Mémoire approuvé avec succès.');
+    }
+
+    public function reject(Request $request, Memoire $memoire)
+    {
+        $this->authorize('update', $memoire);
+
+        $validated = $request->validate([
+            'reason' => 'required|string|min:10',
+        ]);
+
+        $memoire->reject($validated['reason']);
+
+        return redirect()->route('memoires.index')
+            ->with('success', 'Mémoire rejeté.');
+    }
 }

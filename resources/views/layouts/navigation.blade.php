@@ -1,17 +1,19 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-slate-200 shadow-sm">
+<nav x-data="{ open: false }" class="bg-white/80 backdrop-blur-md border-b border-gray-200/30 shadow-md sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20 gap-4">
-            <div class="flex items-center gap-4">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                    <x-application-logo class="block h-10 w-auto fill-current text-slate-900" />
-                    <div>
-                        <p class="text-lg font-semibold text-slate-900">{{ config('app.name', 'Lucas Gestion Académique') }}</p>
-                        <p class="text-sm text-slate-500">Bienvenue dans votre espace de gestion.</p>
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo & Brand -->
+            <div class="flex items-center">
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 hover:opacity-90 transition-opacity py-2 px-1">
+                    <x-application-logo class="block h-8 w-auto fill-current text-blue-600" />
+                    <div class="hidden sm:flex flex-col leading-tight">
+                        <span class="text-xs font-semibold text-gray-500 uppercase tracking-widest">Lucas</span>
+                        <span class="text-sm font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Gestion Académique</span>
                     </div>
                 </a>
             </div>
 
-            <div class="hidden lg:flex lg:items-center lg:space-x-4">
+            <!-- Navigation Links -->
+            <div class="hidden lg:flex lg:items-center lg:gap-1">
                 @auth
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         Tableau de bord
@@ -31,17 +33,21 @@
                 @endauth
             </div>
 
-            <div class="flex items-center gap-3">
+            <!-- Right Section -->
+            <div class="flex items-center gap-2">
                 @auth
-                    <div class="hidden sm:flex sm:items-center sm:gap-3">
-                        <div class="text-sm text-slate-600">Bonjour, <span class="font-semibold text-slate-900">{{ explode(' ', Auth::user()->name)[0] }}</span></div>
+                    <!-- Notification Bell -->
+                    <div class="relative">
+                        <x-notification-bell />
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="hidden sm:block">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 border border-slate-200 text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none transition">
-                                    <span>{{ Auth::user()->name }}</span>
-                                    <svg class="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd" />
-                                    </svg>
+                                <button class="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                                    <x-icon name="user" size="sm" class="w-5 h-5" />
+                                    <span class="hidden md:inline max-w-[150px] truncate">{{ Auth::user()->name }}</span>
                                 </button>
                             </x-slot>
 
@@ -59,20 +65,22 @@
                         </x-dropdown>
                     </div>
                 @else
-                    <div class="hidden sm:flex sm:items-center sm:gap-3">
-                        <a href="{{ route('login') }}" class="text-sm text-slate-700 hover:text-slate-900">Connexion</a>
-                        <a href="{{ route('register') }}" class="rounded-md bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-800">Inscription</a>
+                    <!-- Login/Register Links -->
+                    <div class="hidden sm:flex sm:items-center sm:gap-2">
+                        <a href="{{ route('login') }}" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                            Connexion
+                        </a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 rounded-lg bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 transition-colors duration-200">
+                            S'inscrire
+                        </a>
                     </div>
                 @endauth
 
-                <div class="-me-2 flex items-center sm:hidden">
-                    <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-100 focus:outline-none focus:bg-slate-100 focus:text-slate-700 transition duration-150 ease-in-out">
-                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
+                <!-- Mobile Menu Button -->
+                <button @click="open = !open" class="inline-flex items-center justify-center p-2 rounded-lg text-gray-600 hover:bg-gray-100 sm:hidden transition-colors duration-200">
+                    <x-icon x-show="!open" name="menu" size="md" class="w-6 h-6" />
+                    <x-icon x-show="open" name="x" size="md" class="w-6 h-6" />
+                </button>
             </div>
         </div>
     </div>
@@ -106,10 +114,10 @@
         </div>
 
         @auth
-            <div class="pt-4 pb-1 border-t border-slate-200">
+            <div class="pt-4 pb-1 border-t border-gray-200">
                 <div class="px-4">
-                    <div class="font-medium text-base text-slate-900">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-slate-500">{{ Auth::user()->email }}</div>
+                    <div class="font-medium text-base text-gray-900">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-gray-600">{{ Auth::user()->email }}</div>
                 </div>
 
                 <div class="mt-3 space-y-1">
