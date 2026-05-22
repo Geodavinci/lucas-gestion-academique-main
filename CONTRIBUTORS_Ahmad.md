@@ -21,22 +21,6 @@
 - 🐛 Corrections de bugs
 - 📚 Documentation
 
-### Claude (Anthropic)
-- **Rôle:** Assistant IA / Co-développeur
-- **Contribution:**
-  - Implémentation technique complète
-  - Architecture et patterns
-  - Code review et optimisations
-  - Documentation détaillée
-
-**Domaines de contribution:**
-- 💻 Développement Blade/Laravel
-- 🎯 JavaScript/Alpine.js
-- 🏗️ Architecture composants
-- 📖 Documentation technique
-- 🧪 Testing et validation
-- ✨ Améliorations progressives
-
 ---
 
 ## 📋 Historique des Contributions
@@ -46,32 +30,26 @@
 **Commits majeurs:**
 
 1. **feat: Système de notifications Toast**
-   - Auteurs: Claude, Ahmad
    - Composant toast.blade.php + toast.js
    - Intégration système messages
 
 2. **feat: États de chargement**
-   - Auteurs: Claude, Ahmad
    - Composant spinner + helper loading.js
    - Détection automatique formulaires
 
 3. **feat: Navigation breadcrumbs**
-   - Auteurs: Claude, Ahmad
    - 14 pages mises à jour
    - Composant réutilisable
 
 4. **feat: Pagination personnalisée**
-   - Auteurs: Claude, Ahmad
    - 5 pages listes mises à jour
    - Design moderne cohérent
 
 5. **feat: Modal confirmations**
-   - Auteurs: Claude, Ahmad
    - 13+ formulaires destructifs
    - Remplace confirm() natif
 
 6. **improve: Modernisation show pages**
-   - Auteurs: Claude, Ahmad
    - recu_paiements et soutenances
    - Amélioration design global
 
@@ -96,16 +74,12 @@
    - Exécutez: `npm run build`
    - Testez les fonctionnalités touchées
    - Mettez à jour CHANGELOG.md
-   - Incluez Ahmad et Claude en co-authors
 
 4. **Format du commit:**
    ```
    git commit -m "description des changements
 
-   Détails supplémentaires si nécessaire
-
-   Co-Authored-By: Ahmad <ahmad@example.com>
-   Co-Authored-By: Claude <claude@anthropic.com>"
+   Détails supplémentaires si nécessaire"
    ```
 
 ---
@@ -120,13 +94,6 @@ Pour suivre et comprendre les changements:
 - **MODAL_CONFIRMATIONS.md** - Guide modales confirmations
 
 ---
-
-## 📊 Métriques de Contribution
-
-| Contributeur | Commits | Fichiers | Composants |
-|---|---|---|---|
-| Claude | 4+ | 25+ | 4 |
-| Ahmad | Révisions | Validation | Feedback |
 
 ---
 
@@ -144,7 +111,6 @@ Pour suivre et comprendre les changements:
 
 Pour questions ou clarifications:
 - Ahmad: [email]
-- Claude: Assistant IA (via Claude Code)
 
 ---
 

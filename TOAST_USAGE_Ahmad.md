@@ -1,4 +1,4 @@
-# 🍞 Système de Notifications (Toasts)
+#  Système de Notifications (Toasts)
 
 ## Vue d'ensemble
 
@@ -81,13 +81,13 @@ document.dispatchEvent(new CustomEvent('notify', {
 
 ## Fonctionnalités
 
-✅ **Animations Fluides** - Slide-up avec fade
-✅ **Fermeture Automatique** - 4-5 secondes selon le type
-✅ **Fermeture Manuelle** - Bouton X visible
-✅ **Barre de Progression** - Visualise le temps restant
-✅ **Multiple Toasts** - Peut en afficher plusieurs
-✅ **Icons Détaillées** - Icons visuels pour chaque type
-✅ **Responsive** - Adapt à tous les écrans
+ **Animations Fluides** - Slide-up avec fade
+ **Fermeture Automatique** - 4-5 secondes selon le type
+ **Fermeture Manuelle** - Bouton X visible
+ **Barre de Progression** - Visualise le temps restant
+ **Multiple Toasts** - Peut en afficher plusieurs
+ **Icons Détaillées** - Icons visuels pour chaque type
+ **Responsive** - Adapt à tous les écrans
 
 ## Durées par Défaut
 
