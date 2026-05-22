@@ -156,4 +156,26 @@ class RecuPaiementController extends Controller
         return redirect()->route('recu-paiements.index')
             ->with('success', 'Recu supprime.');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:recu_paiements,id'
+        ])['ids'];
+
+        $recus = RecuPaiement::whereIn('id', $ids)->get();
+
+        foreach ($recus as $recu) {
+            if ($recu->fichier_pdf && Storage::disk('public')->exists($recu->fichier_pdf)) {
+                Storage::disk('public')->delete($recu->fichier_pdf);
+            }
+        }
+
+        RecuPaiement::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('recu-paiements.index')
+            ->with('success', "$count reçu(s) supprimé(s) avec succès.");
+    }
 }

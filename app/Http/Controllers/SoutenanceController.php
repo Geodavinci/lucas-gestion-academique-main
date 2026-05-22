@@ -216,4 +216,18 @@ class SoutenanceController extends Controller
         return redirect()->route('soutenances.index')
             ->with('success', 'Soutenance supprimee.');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:soutenances,id'
+        ])['ids'];
+
+        Soutenance::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('soutenances.index')
+            ->with('success', "$count soutenance(s) supprimée(s) avec succès.");
+    }
 }

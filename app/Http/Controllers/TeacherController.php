@@ -93,4 +93,18 @@ class TeacherController extends Controller
         return redirect()->route('teachers.index')
             ->with('success', 'Enseignant supprime.');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:teachers,id'
+        ])['ids'];
+
+        Teacher::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('teachers.index')
+            ->with('success', "$count enseignant(s) supprimé(s) avec succès.");
+    }
 }

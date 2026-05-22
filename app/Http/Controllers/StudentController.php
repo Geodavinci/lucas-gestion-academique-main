@@ -121,4 +121,21 @@ class StudentController extends Controller
         return redirect()->route('students.index')
                          ->with('success', 'Étudiant supprimé avec succès.');
     }
+
+    /**
+     * Supprimer plusieurs étudiants
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:students,id'
+        ])['ids'];
+
+        Student::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('students.index')
+                         ->with('success', "$count étudiant(s) supprimé(s) avec succès.");
+    }
 }

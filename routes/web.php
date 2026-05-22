@@ -64,6 +64,13 @@ Route::middleware('auth')->group(function () {
         ->name('recu-paiements.export');
     Route::resource('recu-paiements', RecuPaiementController::class);
 
+    // Bulk actions
+    Route::post('students/bulk-delete', [StudentController::class, 'bulkDestroy'])->name('students.bulk-destroy');
+    Route::post('teachers/bulk-delete', [TeacherController::class, 'bulkDestroy'])->name('teachers.bulk-destroy');
+    Route::post('memoires/bulk-delete', [MemoireController::class, 'bulkDestroy'])->name('memoires.bulk-destroy');
+    Route::post('soutenances/bulk-delete', [SoutenanceController::class, 'bulkDestroy'])->name('soutenances.bulk-destroy');
+    Route::post('recu-paiements/bulk-delete', [RecuPaiementController::class, 'bulkDestroy'])->name('recu-paiements.bulk-destroy');
+
     // Notifications
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');

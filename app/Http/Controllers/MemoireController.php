@@ -199,4 +199,18 @@ class MemoireController extends Controller
         return redirect()->route('memoires.index')
             ->with('success', 'Mémoire rejeté.');
     }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:memoires,id'
+        ])['ids'];
+
+        Memoire::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('memoires.index')
+            ->with('success', "$count mémoire(s) supprimé(s) avec succès.");
+    }
 }

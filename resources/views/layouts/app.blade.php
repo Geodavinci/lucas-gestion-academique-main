@@ -14,7 +14,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+    <body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col transition-colors duration-200">
         @include('layouts.navigation')
 
         <!-- Toast Container -->
@@ -22,6 +22,9 @@
 
         <!-- Confirmation Modal -->
         <x-confirm-modal />
+
+        <!-- Batch Confirmation Modal -->
+        <x-batch-confirm-modal />
 
         <main class="max-w-6xl mx-auto w-full px-6 py-8 flex-1">
             @yield('content')

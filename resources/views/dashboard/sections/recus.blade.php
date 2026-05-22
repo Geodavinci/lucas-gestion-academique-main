@@ -51,10 +51,10 @@
                         <td class="px-4 py-3 text-right space-x-2">
                             <a href="{{ route('recu-paiements.show', $recu) }}" class="text-slate-700">Voir</a>
                             <a href="{{ route('recu-paiements.edit', $recu) }}" class="text-slate-700">Éditer</a>
-                            <form method="POST" action="{{ route('recu-paiements.destroy', $recu) }}" class="inline">
+                            <form method="POST" action="{{ route('recu-paiements.destroy', $recu) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer ce reçu ?">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-rose-600" onclick="return confirm('Supprimer ce reçu ?')">Supprimer</button>
+                                <button class="text-rose-600 hover:text-rose-700 font-medium">Supprimer</button>
                             </form>
                         </td>
                     </tr>

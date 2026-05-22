@@ -56,10 +56,10 @@
                             @if (auth()->user()?->role === 'admin')
                                 <a href="{{ route('memoires.edit', $memoire) }}" class="text-slate-700">Modifier</a>
                             @endif
-                            <form method="POST" action="{{ route('memoires.destroy', $memoire) }}" class="inline">
+                            <form method="POST" action="{{ route('memoires.destroy', $memoire) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer ce mémoire ?">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-rose-600" onclick="return confirm('Supprimer ce mémoire ?')">Supprimer</button>
+                                <button class="text-rose-600 hover:text-rose-700 font-medium">Supprimer</button>
                             </form>
                         </td>
                     </tr>

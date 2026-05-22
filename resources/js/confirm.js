@@ -90,3 +90,78 @@ export function confirmAction(message, callback, options = {}) {
   // Open modal
   window.dispatchEvent(new CustomEvent('open-modal', { detail: 'confirm-modal' }));
 }
+
+// For batch confirmations
+export function initBatchActions() {
+  document.addEventListener('batch-confirm', (e) => {
+    const { selectedCount = 0, action = 'delete', callback } = e.detail;
+
+    if (shouldSkipBatchConfirm(action)) {
+      if (callback) callback();
+      return;
+    }
+
+    // Dispatch to batch modal
+    window.dispatchEvent(new CustomEvent('batch-confirm', {
+      detail: {
+        title: getBatchTitle(action, selectedCount),
+        message: getBatchMessage(action, selectedCount),
+        confirmText: getBatchConfirmText(action),
+        selectedCount,
+        actionType: action,
+        callback
+      }
+    }));
+  });
+}
+
+function getBatchTitle(action, count) {
+  if (action === 'delete') {
+    return `Supprimer ${count} élément${count > 1 ? 's' : ''}`;
+  }
+  return `Confirmer l'action`;
+}
+
+function getBatchMessage(action, count) {
+  if (action === 'delete') {
+    return `Cette action supprimera ${count} élément${count > 1 ? 's' : ''} de façon permanente. Cette action ne peut pas être annulée.`;
+  }
+  return `Êtes-vous sûr de vouloir effectuer cette action sur ${count} éléments?`;
+}
+
+function getBatchConfirmText(action) {
+  if (action === 'delete') return 'Supprimer tous';
+  return 'Confirmer';
+}
+
+function shouldSkipBatchConfirm(action) {
+  return sessionStorage.getItem(`batch-${action}-skip`) === 'true';
+}
+
+export function submitBatchAction(form, selectedIds, action = 'delete') {
+  if (selectedIds.length === 0) {
+    toast.warning('Aucun élément sélectionné', 'Veuillez sélectionner au moins un élément');
+    return;
+  }
+
+  // Dispatch batch confirmation event
+  document.dispatchEvent(new CustomEvent('batch-confirm', {
+    detail: {
+      selectedCount: selectedIds.length,
+      action,
+      callback: () => {
+        // Add selected IDs to form
+        selectedIds.forEach(id => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'ids[]';
+          input.value = id;
+          form.appendChild(input);
+        });
+
+        // Submit form
+        form.submit();
+      }
+    }
+  }));
+}
