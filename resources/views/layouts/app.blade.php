@@ -20,6 +20,9 @@
         <!-- Toast Container -->
         <x-toast />
 
+        <!-- Confirmation Modal -->
+        <x-confirm-modal />
+
         <main class="max-w-6xl mx-auto w-full px-6 py-8 flex-1">
             @yield('content')
         </main>

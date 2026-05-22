@@ -43,7 +43,7 @@
             @endcan
 
             @can('delete', $memoire)
-                <form action="{{ route('memoires.destroy', $memoire) }}" method="POST" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr?');">
+                <form action="{{ route('memoires.destroy', $memoire) }}" method="POST" style="display: inline;" data-confirm="Êtes-vous sûr de vouloir supprimer ce mémoire ?">
                     @csrf @method('DELETE')
                     <button type="submit" class="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 font-medium">
                         <x-icon name="trash" size="sm" class="w-4 h-4" />
@@ -123,7 +123,7 @@
                 <hr class="border-gray-200">
 
                 <!-- Approve -->
-                <form action="{{ route('memoires.approve', $memoire) }}" method="POST" onsubmit="return confirm('Approuver ce mémoire?');" class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <form action="{{ route('memoires.approve', $memoire) }}" method="POST" data-confirm="Êtes-vous sûr de vouloir approuver ce mémoire ?" data-confirm-text="Approuver" data-confirm-danger="false" class="p-4 bg-gray-50 rounded-lg border border-gray-200">
                     @csrf
                     <button type="submit" class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors duration-200 font-medium">
                         <x-icon name="check-circle" size="sm" class="w-4 h-4" />

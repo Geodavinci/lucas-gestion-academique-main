@@ -69,7 +69,7 @@
                                 </a>
 
                                 <!-- Delete Button -->
-                                <form method="POST" action="{{ route('teachers.destroy', $teacher) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet enseignant ?')">
+                                <form method="POST" action="{{ route('teachers.destroy', $teacher) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer cet enseignant ?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Supprimer">
