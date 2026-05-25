@@ -72,10 +72,10 @@
                         <td class="px-4 py-3 text-right space-x-2">
                             <a href="{{ route('soutenances.show', $soutenance) }}" class="text-slate-700">Voir</a>
                             <a href="{{ route('soutenances.edit', $soutenance) }}" class="text-slate-700">Éditer</a>
-                            <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline">
+                            <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer cette soutenance ?">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-rose-600" onclick="return confirm('Supprimer cette soutenance ?')">Supprimer</button>
+                                <button class="text-rose-600 hover:text-rose-700 font-medium">Supprimer</button>
                             </form>
                         </td>
                     </tr>

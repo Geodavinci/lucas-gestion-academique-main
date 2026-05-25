@@ -412,8 +412,18 @@
                                             <p class="text-xs text-slate-500">{{ $memoire->student?->nom }} {{ $memoire->student?->prenom }}</p>
                                         </div>
                                     </div>
-                                    <a href="{{ route('memoires.download', $memoire) }}" target="_blank" 
-                                       class="text-sm font-medium text-sky-600 hover:text-sky-700">PDF</a>
+                                    <div class="flex items-center gap-3">
+                                        @if ($memoire->fichier_pdf)
+                                            <a href="{{ route('memoires.download', $memoire) }}" target="_blank" 
+                                               class="text-sm font-medium text-sky-600 hover:text-sky-700">PDF</a>
+                                        @else
+                                            <span class="text-slate-500 text-sm">Aucun PDF</span>
+                                        @endif
+                                        @if (auth()->user()?->role === 'admin')
+                                            <a href="{{ route('memoires.edit', $memoire) }}" target="_blank" 
+                                               class="text-sm font-medium text-slate-600 hover:text-slate-700">Modifier</a>
+                                        @endif
+                                    </div>
                                 </div>
                                 @empty
                                 <div class="py-4 text-center text-slate-500">
@@ -448,10 +458,14 @@
                                             <p class="text-xs text-slate-500">{{ $memoire->student?->nom }} {{ $memoire->student?->prenom }}</p>
                                         </div>
                                     </div>
-                                    <a href="{{ route('memoires.download', $memoire) }}" target="_blank" 
-                                       class="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50">
-                                        Voir
-                                    </a>
+                                    @if ($memoire->fichier_pdf)
+                                        <a href="{{ route('memoires.download', $memoire) }}" target="_blank" 
+                                           class="rounded-lg border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50">
+                                            Voir
+                                        </a>
+                                    @else
+                                        <span class="text-slate-500 text-xs">Aucun PDF</span>
+                                    @endif
                                 </div>
                                 @empty
                                 <div class="py-4 text-center text-slate-500">
@@ -532,7 +546,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
                                         @forelse ($users as $user)
-                                        <tr class="hover:bg-slate-50 transition-colors">
+                                        <tr class="hover:bg-slate-50 transition-colors duration-200">
                                             <td class="px-4 py-3">
                                                 <div class="font-medium text-slate-900">{{ $user->name }}</div>
                                                 <div class="text-xs text-slate-500">{{ $user->email }}</div>

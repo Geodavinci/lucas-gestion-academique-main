@@ -61,8 +61,8 @@ public function isUser()
         return $this->hasOne(Student::class);
     }
 
-    public function teacher()
+    public function notifications()
     {
-        return $this->hasOne(Teacher::class);
+        return $this->hasMany(Notification::class);
     }
 }

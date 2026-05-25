@@ -48,10 +48,10 @@
                         <td class="px-4 py-3 text-right space-x-2">
                             <a href="{{ route('students.show', $student) }}" class="text-slate-700">Voir</a>
                             <a href="{{ route('students.edit', $student) }}" class="text-slate-700">Éditer</a>
-                            <form method="POST" action="{{ route('students.destroy', $student) }}" class="inline">
+                            <form method="POST" action="{{ route('students.destroy', $student) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer cet étudiant ?">
                                 @csrf
                                 @method('DELETE')
-                                <button class="text-rose-600" onclick="return confirm('Supprimer cet étudiant ?')">Supprimer</button>
+                                <button class="text-rose-600 hover:text-rose-700 font-medium">Supprimer</button>
                             </form>
                         </td>
                     </tr>

@@ -39,28 +39,24 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'matricule' => 'required|string|max:50|unique:students,matricule',
             'nom'       => 'required|string|max:100',
             'prenom'    => 'required|string|max:100',
-            'email'     => 'required|email|unique:students,email',
+            'email'     => 'required|email',
             'telephone' => 'nullable|string|max:20',
             'filiere'   => 'required|string|max:100',
             'niveau'    => 'required|string|max:50',
         ]);
 
-        Student::create([
-            'matricule' => $request->matricule,
-            'nom'       => $request->nom,
-            'prenom'    => $request->prenom,
-            'email'     => $request->email,
-            'telephone' => $request->telephone,
-            'filiere'   => $request->filiere,
-            'niveau'    => $request->niveau,
-        ]);
+        try {
+            Student::createWithUser($validated);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
 
         return redirect()->route('students.index')
-                         ->with('success', 'Étudiant enregistré avec succès.');
+                         ->with('success', 'Étudiant enregistré avec succès. Un email d\'activation a été envoyé.');
     }
 
     /**
@@ -68,18 +64,10 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        $student = Student::findOrFail($id);
-
-        $search = request()->query('q');
-
-        $memoiresQuery = $student->memoires()->orderByDesc('annee');
-        if ($search) {
-            $memoiresQuery->where('titre', 'like', '%' . $search . '%');
-        }
-        $memoires = $memoiresQuery->get();
-        $recus = $student->recuPaiements()->orderByDesc('date_paiement')->get();
-
-        return view('students.show', compact('student', 'memoires', 'recus', 'search'));
+        $student = Student::with(['memoires', 'recuPaiements'])->findOrFail($id);
+        $memoires = $student->memoires;
+        $recus = $student->recuPaiements;
+        return view('students.show', compact('student', 'memoires', 'recus'));
     }
 
     /**
@@ -132,5 +120,22 @@ class StudentController extends Controller
 
         return redirect()->route('students.index')
                          ->with('success', 'Étudiant supprimé avec succès.');
+    }
+
+    /**
+     * Supprimer plusieurs étudiants
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:students,id'
+        ])['ids'];
+
+        Student::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('students.index')
+                         ->with('success', "$count étudiant(s) supprimé(s) avec succès.");
     }
 }

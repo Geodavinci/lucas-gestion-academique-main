@@ -31,8 +31,18 @@
                 <tr class="border-t">
                     <td class="px-4 py-3">{{ $memoire->titre }}</td>
                     <td class="px-4 py-3">{{ $memoire->annee }}</td>
-                    <td class="px-4 py-3 text-right">
-                        <a href="{{ route('memoires.download', $memoire) }}" target="_blank" class="text-slate-700 hover:text-slate-900">Voir PDF</a>
+                    <td class="px-4 py-3 text-right space-x-2">
+                        @if ($memoire->fichier_pdf)
+                            <a href="{{ route('memoires.download', $memoire) }}" target="_blank" class="text-slate-700 hover:text-slate-900">Voir PDF</a>
+                        @else
+                            <span class="text-slate-500">Aucun PDF</span>
+                        @endif
+                        @if ($memoire->fichier_pdf_corrige)
+                            <a href="{{ route('memoires.download.corrige', $memoire) }}" target="_blank" class="text-slate-700 hover:text-slate-900">Voir corrigé</a>
+                        @endif
+                        @if (auth()->user()?->role === 'admin')
+                            <a href="{{ route('memoires.edit', $memoire) }}" class="text-slate-700 hover:text-slate-900">Modifier</a>
+                        @endif
                     </td>
                 </tr>
             @empty

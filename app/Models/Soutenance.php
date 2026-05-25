@@ -16,10 +16,14 @@ class Soutenance extends Model
         'student_id',
         'directeur_memoire_id',
         'evaluateur_id',
-        'president_jury_id'
+        'president_jury_id',
+        'lieu'
     ];
 
-    
+    protected $casts = [
+        'date_soutenance' => 'datetime',
+    ];
+
 
     public function student()
     {
@@ -39,5 +43,10 @@ class Soutenance extends Model
     public function presidentJury()
     {
         return $this->belongsTo(Teacher::class, 'president_jury_id');
+    }
+
+    public function memoire()
+    {
+        return $this->hasMany(Memoire::class, 'student_id', 'student_id');
     }
 }

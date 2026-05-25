@@ -14,27 +14,71 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-slate-100 text-slate-900 flex flex-col">
+    <body class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col transition-colors duration-200">
         @include('layouts.navigation')
 
+        <!-- Toast Container -->
+        <x-toast />
+
+        <!-- Confirmation Modal -->
+        <x-confirm-modal />
+
+        <!-- Batch Confirmation Modal -->
+        <x-batch-confirm-modal />
+
         <main class="max-w-6xl mx-auto w-full px-6 py-8 flex-1">
-            @if (session('success'))
-                <div class="mb-6 rounded bg-emerald-50 border border-emerald-200 px-4 py-3 text-emerald-700">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="mb-6 rounded bg-rose-50 border border-rose-200 px-4 py-3 text-rose-700">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             @yield('content')
         </main>
+
+        @stack('scripts')
+
+        <!-- Show Toasts from Session -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if (session('success'))
+                    document.dispatchEvent(new CustomEvent('notify', {
+                        detail: {
+                            id: Math.random(),
+                            type: 'success',
+                            title: 'Succès',
+                            message: '{{ session('success') }}',
+                            duration: 4000
+                        }
+                    }));
+                @endif
+
+                @if (session('error'))
+                    document.dispatchEvent(new CustomEvent('notify', {
+                        detail: {
+                            id: Math.random(),
+                            type: 'error',
+                            title: 'Erreur',
+                            message: '{{ session('error') }}',
+                            duration: 5000
+                        }
+                    }));
+                @endif
+
+                @if ($errors->any())
+                    const errorMessages = [
+                        @foreach ($errors->all() as $error)
+                            '{{ $error }}',
+                        @endforeach
+                    ];
+
+                    errorMessages.forEach(msg => {
+                        document.dispatchEvent(new CustomEvent('notify', {
+                            detail: {
+                                id: Math.random(),
+                                type: 'error',
+                                title: 'Validation',
+                                message: msg,
+                                duration: 5000
+                            }
+                        }));
+                    });
+                @endif
+            });
+        </script>
     </body>
 </html>

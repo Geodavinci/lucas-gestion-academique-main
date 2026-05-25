@@ -35,18 +35,22 @@ class TeacherController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $validated = $request->validate([
             'nom' => 'required|string|max:100',
             'prenom' => 'required|string|max:100',
-            'email' => 'nullable|email|max:255|unique:teachers,email',
+            'email' => 'nullable|email|max:255',
             'telephone' => 'nullable|string|max:30',
             'specialite' => 'required|string|max:150',
         ]);
 
-        Teacher::create($data);
+        try {
+            Teacher::createWithUser($validated);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        }
 
         return redirect()->route('teachers.index')
-            ->with('success', 'Enseignant ajoute avec succes.');
+            ->with('success', 'Enseignant ajoute avec succes. Un email d\'activation a été envoyé.');
     }
 
     public function show(Teacher $teacher)
@@ -88,5 +92,19 @@ class TeacherController extends Controller
 
         return redirect()->route('teachers.index')
             ->with('success', 'Enseignant supprime.');
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer|exists:teachers,id'
+        ])['ids'];
+
+        Teacher::whereIn('id', $ids)->delete();
+
+        $count = count($ids);
+        return redirect()->route('teachers.index')
+            ->with('success', "$count enseignant(s) supprimé(s) avec succès.");
     }
 }
