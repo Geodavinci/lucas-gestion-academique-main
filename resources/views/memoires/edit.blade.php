@@ -22,19 +22,27 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Étudiant -->
-                <div class="md:col-span-2">
-                    <x-input-label for="student_id" class="text-sm font-semibold text-gray-700">Étudiant *</x-input-label>
-                    <select name="student_id" id="student_id" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
-                        <option value="">-- Sélectionner un étudiant --</option>
-                        @foreach ($students as $student)
-                            <option value="{{ $student->id }}" @selected(old('student_id', $memoire->student_id) == $student->id)>
-                                {{ $student->nom }} {{ $student->prenom }} ({{ $student->matricule }})
-                            </option>
-                        @endforeach
-                    </select>
-                    <x-input-error :messages="$errors->get('student_id')" />
-                </div>
+                @if (auth()->user()->role === 'admin')
+                    <div class="md:col-span-2">
+                        <x-input-label for="student_id" class="text-sm font-semibold text-gray-700">Étudiant *</x-input-label>
+                        <select name="student_id" id="student_id" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white">
+                            <option value="">-- Sélectionner un étudiant --</option>
+                            @foreach ($students as $student)
+                                <option value="{{ $student->id }}" @selected(old('student_id', $memoire->student_id) == $student->id)>
+                                    {{ $student->nom }} {{ $student->prenom }} ({{ $student->matricule }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('student_id')" />
+                    </div>
+                @else
+                    <div class="md:col-span-2">
+                        <x-input-label class="text-sm font-semibold text-gray-700">Étudiant</x-input-label>
+                        <p class="mt-2 text-gray-900">
+                            {{ $memoire->student?->nom ?? 'Étudiant inconnu' }} {{ $memoire->student?->prenom }}
+                        </p>
+                    </div>
+                @endif
 
                 <!-- Titre -->
                 <div class="md:col-span-2">
@@ -53,13 +61,17 @@
 
                 <!-- Année -->
                 <div>
-                    <x-input-label for="annee" class="text-sm font-semibold text-gray-700">Année *</x-input-label>
+                    <x-input-label for="annee" class="text-sm font-semibold text-gray-700">Année de soutenance *</x-input-label>
+                    <p class="mt-1 text-xs text-gray-500">Un mémoire déjà soutenu ne peut pas avoir une année future.</p>
                     <x-text-input
                         id="annee"
                         name="annee"
-                        type="text"
+                        type="number"
                         value="{{ old('annee', $memoire->annee) }}"
                         placeholder="Ex: 2024"
+                        min="1900"
+                        max="{{ now()->year }}"
+                        step="1"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     />
@@ -84,18 +96,20 @@
 
                 <!-- Fichier PDF Corrigé -->
                 <div>
-                    <x-input-label for="fichier_pdf_corrige" class="text-sm font-semibold text-gray-700">Fichier PDF corrigé</x-input-label>
-                    <input
-                        type="file"
-                        id="fichier_pdf_corrige"
-                        name="fichier_pdf_corrige"
-                        accept=".pdf"
-                        class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
-                    />
+                    @if (auth()->user()->role === 'admin')
+                        <x-input-label for="fichier_pdf_corrige" class="text-sm font-semibold text-gray-700">Fichier PDF corrigé</x-input-label>
+                        <input
+                            type="file"
+                            id="fichier_pdf_corrige"
+                            name="fichier_pdf_corrige"
+                            accept=".pdf"
+                            class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                        />
+                        <x-input-error :messages="$errors->get('fichier_pdf_corrige')" />
+                    @endif
                     @if ($memoire->fichier_pdf_corrige)
                         <p class="text-xs text-gray-500 mt-2">Version corrigée: <a href="{{ route('memoires.download.corrige', $memoire) }}" target="_blank" class="text-emerald-600 hover:underline">Télécharger</a></p>
                     @endif
-                    <x-input-error :messages="$errors->get('fichier_pdf_corrige')" />
                 </div>
             </div>
 

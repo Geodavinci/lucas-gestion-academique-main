@@ -12,9 +12,12 @@ class AnalyticsService
 {
     public static function getMemoiresByFiliereData()
     {
-        $data = Student::select('filiere', DB::raw('count(DISTINCT student_id) as count'))
+        $data = Student::select(
+            'students.filiere',
+            DB::raw('count(DISTINCT students.id) as count')
+        )
             ->join('memoires', 'students.id', '=', 'memoires.student_id')
-            ->groupBy('filiere')
+            ->groupBy('students.filiere')
             ->pluck('count', 'filiere');
 
         return [
@@ -45,10 +48,13 @@ class AnalyticsService
 
     public static function getMemoiresByNiveauData()
     {
-        $data = Student::select('niveau', DB::raw('count(DISTINCT student_id) as count'))
+        $data = Student::select(
+            'students.niveau',
+            DB::raw('count(DISTINCT students.id) as count')
+        )
             ->join('memoires', 'students.id', '=', 'memoires.student_id')
-            ->groupBy('niveau')
-            ->orderBy('niveau')
+            ->groupBy('students.niveau')
+            ->orderBy('students.niveau')
             ->pluck('count', 'niveau');
 
         return [
@@ -65,7 +71,10 @@ class AnalyticsService
 
     public static function getStudentCountByFiliere()
     {
-        $data = Student::select('filiere', DB::raw('count(*) as count'))
+        $data = Student::select(
+            'filiere',
+            DB::raw('count(*) as count')
+        )
             ->groupBy('filiere')
             ->pluck('count', 'filiere');
 
@@ -91,7 +100,7 @@ class AnalyticsService
         $soutenances = Soutenance::whereNotNull('date_soutenance')
             ->get(['date_soutenance']);
 
-        $grouped = $soutenances->groupBy(function($item) {
+        $grouped = $soutenances->groupBy(function ($item) {
             return $item->date_soutenance->format('Y-m');
         })->map->count();
 
@@ -99,7 +108,9 @@ class AnalyticsService
         $values = [];
 
         foreach ($grouped->sort()->keys() as $month) {
-            $labels[] = \Carbon\Carbon::createFromFormat('Y-m', $month)->format('M Y');
+            $labels[] = \Carbon\Carbon::createFromFormat('Y-m', $month)
+                ->format('M Y');
+
             $values[] = $grouped[$month];
         }
 
@@ -118,20 +129,42 @@ class AnalyticsService
 
     public static function getTeacherWorkload()
     {
-        $data = Teacher::select('teachers.id', 'teachers.nom', 'teachers.prenom')
+        $data = Teacher::select(
+            'teachers.id',
+            'teachers.nom',
+            'teachers.prenom'
+        )
             ->selectRaw('count(DISTINCT soutenances.id) as count')
             ->leftJoin('soutenances', function ($join) {
-                $join->on('teachers.id', '=', 'soutenances.directeur_memoire_id')
-                    ->orOn('teachers.id', '=', 'soutenances.evaluateur_id')
-                    ->orOn('teachers.id', '=', 'soutenances.president_jury_id');
+                $join->on(
+                    'teachers.id',
+                    '=',
+                    'soutenances.directeur_memoire_id'
+                )
+                    ->orOn(
+                        'teachers.id',
+                        '=',
+                        'soutenances.evaluateur_id'
+                    )
+                    ->orOn(
+                        'teachers.id',
+                        '=',
+                        'soutenances.president_jury_id'
+                    );
             })
-            ->groupBy('teachers.id', 'teachers.nom', 'teachers.prenom')
+            ->groupBy(
+                'teachers.id',
+                'teachers.nom',
+                'teachers.prenom'
+            )
             ->orderByDesc('count')
             ->limit(10)
             ->get();
 
         return [
-            'labels' => $data->map(fn($t) => "{$t->nom} {$t->prenom}")->toArray(),
+            'labels' => $data->map(
+                fn ($t) => "{$t->nom} {$t->prenom}"
+            )->toArray(),
             'datasets' => [[
                 'label' => 'Nombre de soutenances',
                 'data' => $data->pluck('count')->toArray(),
@@ -149,7 +182,11 @@ class AnalyticsService
             'total_teachers' => Teacher::count(),
             'total_memoires' => Memoire::count(),
             'total_soutenances' => Soutenance::count(),
-            'upcoming_soutenances' => Soutenance::where('date_soutenance', '>=', now())
+            'upcoming_soutenances' => Soutenance::where(
+                'date_soutenance',
+                '>=',
+                now()
+            )
                 ->where('date_soutenance', '<=', now()->addDays(30))
                 ->count(),
         ];
@@ -161,10 +198,14 @@ class AnalyticsService
 
         return [
             'name' => "{$teacher->nom} {$teacher->prenom}",
-            'soutenances_as_director' => $teacher->soutenancesAsDirecteur()->count(),
-            'soutenances_as_evaluator' => $teacher->soutenancesAsEvaluateur()->count(),
-            'soutenances_as_president' => $teacher->soutenancesAsPresident()->count(),
-            'total_soutenances' => $teacher->soutenancesAsDirecteur()->count() +
+            'soutenances_as_director' =>
+                $teacher->soutenancesAsDirecteur()->count(),
+            'soutenances_as_evaluator' =>
+                $teacher->soutenancesAsEvaluateur()->count(),
+            'soutenances_as_president' =>
+                $teacher->soutenancesAsPresident()->count(),
+            'total_soutenances' =>
+                $teacher->soutenancesAsDirecteur()->count() +
                 $teacher->soutenancesAsEvaluateur()->count() +
                 $teacher->soutenancesAsPresident()->count(),
         ];
@@ -172,7 +213,8 @@ class AnalyticsService
 
     public static function getStudentStats($studentId)
     {
-        $student = Student::with('memoires', 'soutenances')->findOrFail($studentId);
+        $student = Student::with('memoires', 'soutenances')
+            ->findOrFail($studentId);
 
         return [
             'name' => "{$student->nom} {$student->prenom}",

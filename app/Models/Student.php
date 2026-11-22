@@ -71,7 +71,7 @@ class Student extends Model
             $resetUrl = Password::createToken($user);
             $resetLink = route('password.reset', ['token' => $resetUrl, 'email' => $email]);
 
-            Mail::send(new AccountCreatedWithReset(
+            Mail::to($email)->send(new AccountCreatedWithReset(
                 name: $data['nom'] . ' ' . $data['prenom'],
                 email: $email,
                 resetUrl: $resetLink,

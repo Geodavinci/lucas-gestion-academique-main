@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,19 @@ class Memoire extends Model
     public function student()
     {
         return $this->belongsTo(Student::class);
+    }
+
+    public function getStudentFullNameAttribute()
+    {
+        $student = $this->student;
+
+        if (!$student) {
+            return 'Étudiant inconnu';
+        }
+
+        $name = trim($student->nom . ' ' . $student->prenom);
+
+        return $name !== '' ? $name : ($student->user?->name ?? 'Étudiant inconnu');
     }
 
     public function reviewer()

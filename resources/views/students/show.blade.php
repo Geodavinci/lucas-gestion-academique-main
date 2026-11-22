@@ -19,10 +19,12 @@
                 <x-icon name="pencil" size="sm" class="w-4 h-4" />
                 Modifier
             </a>
-            <a href="{{ route('soutenances.createForStudent', $student) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors duration-200 font-medium">
-                <x-icon name="plus-circle" size="sm" class="w-4 h-4" />
-                Soutenance
-            </a>
+            @if (auth()->user()->role === 'admin')
+                <a href="{{ route('soutenances.createForStudent', $student) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 transition-colors duration-200 font-medium">
+                    <x-icon name="plus-circle" size="sm" class="w-4 h-4" />
+                    Soutenance
+                </a>
+            @endif
         </div>
     </div>
 

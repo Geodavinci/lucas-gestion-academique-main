@@ -19,10 +19,12 @@
             </div>
         </div>
         <div class="flex gap-3">
-            <a href="{{ route('soutenances.edit', $soutenance) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-semibold">
-                <x-icon name="pencil" size="sm" class="w-4 h-4" />
-                Modifier
-            </a>
+            @if (auth()->user()->role === 'admin')
+                <a href="{{ route('soutenances.edit', $soutenance) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-semibold">
+                    <x-icon name="pencil" size="sm" class="w-4 h-4" />
+                    Modifier / affecter le jury
+                </a>
+            @endif
             <a href="{{ route('soutenances.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-600 text-white hover:bg-gray-700 transition-colors duration-200 font-semibold">
                 <x-icon name="arrow-left" size="sm" class="w-4 h-4" />
                 Retour
@@ -80,6 +82,7 @@
         </div>
     @endif
 
+    @if (auth()->user()->role === 'admin')
     <!-- Delete Section -->
     <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
@@ -98,5 +101,6 @@
             </button>
         </form>
     </div>
+    @endif
 </div>
 @endsection

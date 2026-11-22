@@ -51,13 +51,16 @@
 
                 <!-- Année -->
                 <div>
-                    <x-input-label for="annee" class="text-sm font-semibold text-gray-700">Année *</x-input-label>
+                    <x-input-label for="annee" class="text-sm font-semibold text-gray-700">Année de soutenance *</x-input-label>
                     <x-text-input
                         id="annee"
                         name="annee"
-                        type="text"
+                        type="number"
                         value="{{ old('annee') }}"
                         placeholder="Ex: 2024"
+                        min="1900"
+                        max="{{ now()->year }}"
+                        step="1"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     />

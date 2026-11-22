@@ -38,6 +38,11 @@ class Teacher extends Model
         return $this->hasMany(Soutenance::class, 'president_jury_id');
     }
 
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'course_teacher')->withTimestamps();
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -67,7 +72,7 @@ class Teacher extends Model
                 $resetUrl = Password::createToken($user);
                 $resetLink = route('password.reset', ['token' => $resetUrl, 'email' => $email]);
 
-                Mail::send(new AccountCreatedWithReset(
+                Mail::to($email)->send(new AccountCreatedWithReset(
                     name: $data['nom'] . ' ' . $data['prenom'],
                     email: $email,
                     resetUrl: $resetLink,

@@ -185,7 +185,7 @@
                                 <a href="{{ route('memoires.show', $memoire) }}" class="font-semibold text-gray-900 hover:text-blue-600 transition-colors text-lg">{{ $memoire->titre }}</a>
                                 <p class="text-sm text-gray-600 mt-2 flex items-center gap-2">
                                     <x-icon name="user" class="w-4 h-4 text-gray-400" />
-                                    {{ $memoire->student->nom }} {{ $memoire->student->prenom }}
+                                    {{ $memoire->student_full_name }}
                                 </p>
                                 <p class="text-xs text-gray-500 mt-2 flex items-center gap-2">
                                     <x-icon name="calendar" class="w-4 h-4 text-gray-400" />
@@ -226,7 +226,7 @@
                     <div class="px-8 py-5 hover:bg-gradient-to-r hover:from-amber-50 to-transparent transition-all duration-200 group border-l-4 border-transparent hover:border-amber-500">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <a href="{{ route('soutenances.show', $soutenance) }}" class="font-semibold text-gray-900 hover:text-amber-600 transition-colors text-lg">{{ $soutenance->student->nom }} {{ $soutenance->student->prenom }}</a>
+                                <a href="{{ route('soutenances.show', $soutenance) }}" class="font-semibold text-gray-900 hover:text-amber-600 transition-colors text-lg">{{ $soutenance->student_full_name }}</a>
                                 @if($soutenance->date_soutenance)
                                     <p class="text-sm text-gray-600 mt-2 flex items-center gap-2">
                                         <x-icon name="calendar" class="w-4 h-4 text-gray-400" />

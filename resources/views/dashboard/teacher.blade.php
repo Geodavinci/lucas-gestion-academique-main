@@ -110,7 +110,7 @@
                 <div class="px-8 py-6 hover:bg-gradient-to-r hover:from-blue-50 to-transparent transition-all duration-200 group border-l-4 border-transparent hover:border-blue-500">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
-                            <p class="font-semibold text-gray-900 text-lg">{{ $soutenance->student->nom }} {{ $soutenance->student->prenom }}</p>
+                            <p class="font-semibold text-gray-900 text-lg">{{ $soutenance->student_full_name }}</p>
                             @if($soutenance->date_soutenance)
                                 <p class="text-sm text-gray-600 mt-3 flex items-center gap-2">
                                     <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100">

@@ -14,7 +14,7 @@
             <div class="flex-1">
                 <h1 class="text-4xl font-bold text-gray-900">{{ $memoire->titre }}</h1>
                 <p class="text-gray-600 mt-2">
-                    Par <strong>{{ $memoire->student->nom }} {{ $memoire->student->prenom }}</strong>
+                    Par <strong>{{ $memoire->student_full_name }}</strong>
                     • Année: {{ $memoire->annee }}
                 </p>
             </div>
@@ -30,7 +30,9 @@
                         Modifier
                     </a>
                 @endif
+            @endcan
 
+            @can('submit', $memoire)
                 @if($memoire->status === 'draft')
                     <form action="{{ route('memoires.submit', $memoire) }}" method="POST" style="display: inline;">
                         @csrf

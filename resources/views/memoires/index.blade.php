@@ -90,14 +90,15 @@
                                     </a>
                                 @endif
 
-                                <!-- Edit Button (Admin only) -->
-                                @if(auth()->user()?->role === 'admin')
+                                @if (auth()->check())
+                                    @can('update', $memoire)
                                     <a href="{{ route('memoires.edit', $memoire) }}" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Modifier">
                                         <x-icon name="pencil" size="sm" class="w-4 h-4" />
                                         <span class="hidden sm:inline">Modifier</span>
                                     </a>
+                                    @endcan
 
-                                    <!-- Delete Button -->
+                                    @can('delete', $memoire)
                                     <form method="POST" action="{{ route('memoires.destroy', $memoire) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer ce mémoire ?">
                                         @csrf
                                         @method('DELETE')
@@ -106,6 +107,7 @@
                                             <span class="hidden sm:inline">Supprimer</span>
                                         </button>
                                     </form>
+                                    @endcan
                                 @endif
                             </div>
                         </td>

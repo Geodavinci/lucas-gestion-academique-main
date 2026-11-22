@@ -34,6 +34,7 @@ class DashboardController extends Controller
                 ->take(5)
                 ->get();
             $studentsList = Student::orderBy('nom')->orderBy('prenom')->get();
+            $teachersList = Teacher::orderBy('nom')->orderBy('prenom')->get();
 
             return view('dashboard.admin', compact(
                 'stats',
@@ -44,7 +45,8 @@ class DashboardController extends Controller
                 'teacherWorkloadData',
                 'latestMemoires',
                 'latestSoutenances',
-                'studentsList'
+                'studentsList',
+                'teachersList'
             ));
         }
 

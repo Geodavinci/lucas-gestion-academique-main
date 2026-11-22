@@ -40,9 +40,9 @@
                         @if ($memoire->fichier_pdf_corrige)
                             <a href="{{ route('memoires.download.corrige', $memoire) }}" target="_blank" class="text-slate-700 hover:text-slate-900">Voir corrigé</a>
                         @endif
-                        @if (auth()->user()?->role === 'admin')
+                        @can('update', $memoire)
                             <a href="{{ route('memoires.edit', $memoire) }}" class="text-slate-700 hover:text-slate-900">Modifier</a>
-                        @endif
+                        @endcan
                     </td>
                 </tr>
             @empty

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Soutenance;
 use App\Models\Student;
 use App\Models\Teacher;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 
 class SoutenanceController extends Controller
@@ -72,28 +73,10 @@ class SoutenanceController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'date_soutenance' => 'required|date',
-            'statut' => 'required|in:Valide,Ajourne',
-            'description' => 'nullable|string|max:2000',
-            'student_id' => 'required|exists:students,id',
-            'directeur_memoire_id' => 'nullable|exists:teachers,id',
-            'evaluateur_id' => 'nullable|exists:teachers,id',
-            'president_jury_id' => 'nullable|exists:teachers,id',
-        ], [
-            'date_soutenance.required' => 'La date de soutenance est obligatoire.',
-            'date_soutenance.date' => 'La date de soutenance est invalide.',
-            'statut.required' => 'Le statut est obligatoire.',
-            'statut.in' => 'Le statut doit etre Valide ou Ajourne.',
-            'description.max' => 'La description ne doit pas depasser 2000 caracteres.',
-            'student_id.required' => 'Veuillez selectionner un etudiant.',
-            'student_id.exists' => 'L etudiant selectionne est invalide.',
-            'directeur_memoire_id.exists' => 'Le directeur de memoire selectionne est invalide.',
-            'evaluateur_id.exists' => 'L evaluateur selectionne est invalide.',
-            'president_jury_id.exists' => 'Le president du jury selectionne est invalide.',
-        ]);
+        $data = $this->validateSoutenance($request);
 
-        Soutenance::create($data);
+        $soutenance = Soutenance::create($data);
+        NotificationService::notifyTeachersJuryAssigned($soutenance);
 
         return redirect()->route('soutenances.index')
             ->with('success', 'Soutenance ajoutee avec succes.');
@@ -182,28 +165,16 @@ class SoutenanceController extends Controller
 
     public function update(Request $request, Soutenance $soutenance)
     {
-        $data = $request->validate([
-            'date_soutenance' => 'required|date',
-            'statut' => 'required|in:Valide,Ajourne',
-            'description' => 'nullable|string|max:2000',
-            'student_id' => 'required|exists:students,id',
-            'directeur_memoire_id' => 'nullable|exists:teachers,id',
-            'evaluateur_id' => 'nullable|exists:teachers,id',
-            'president_jury_id' => 'nullable|exists:teachers,id',
-        ], [
-            'date_soutenance.required' => 'La date de soutenance est obligatoire.',
-            'date_soutenance.date' => 'La date de soutenance est invalide.',
-            'statut.required' => 'Le statut est obligatoire.',
-            'statut.in' => 'Le statut doit etre Valide ou Ajourne.',
-            'description.max' => 'La description ne doit pas depasser 2000 caracteres.',
-            'student_id.required' => 'Veuillez selectionner un etudiant.',
-            'student_id.exists' => 'L etudiant selectionne est invalide.',
-            'directeur_memoire_id.exists' => 'Le directeur de memoire selectionne est invalide.',
-            'evaluateur_id.exists' => 'L evaluateur selectionne est invalide.',
-            'president_jury_id.exists' => 'Le president du jury selectionne est invalide.',
-        ]);
+        $data = $this->validateSoutenance($request);
+
+        $juryChanged = collect(['directeur_memoire_id', 'evaluateur_id', 'president_jury_id'])
+            ->contains(fn ($field) => (int) $soutenance->{$field} !== (int) $data[$field]);
 
         $soutenance->update($data);
+
+        if ($juryChanged) {
+            NotificationService::notifyTeachersJuryAssigned($soutenance);
+        }
 
         return redirect()->route('soutenances.show', $soutenance)
             ->with('success', 'Soutenance mise a jour.');
@@ -229,5 +200,35 @@ class SoutenanceController extends Controller
         $count = count($ids);
         return redirect()->route('soutenances.index')
             ->with('success', "$count soutenance(s) supprimée(s) avec succès.");
+    }
+
+    private function validateSoutenance(Request $request): array
+    {
+        return $request->validate([
+            'date_soutenance' => 'required|date',
+            'statut' => 'required|in:Valide,Ajourne',
+            'description' => 'nullable|string|max:2000',
+            'student_id' => 'required|exists:students,id',
+            'directeur_memoire_id' => ['required', 'exists:teachers,id', 'different:evaluateur_id', 'different:president_jury_id'],
+            'evaluateur_id' => ['required', 'exists:teachers,id', 'different:directeur_memoire_id', 'different:president_jury_id'],
+            'president_jury_id' => ['required', 'exists:teachers,id', 'different:directeur_memoire_id', 'different:evaluateur_id'],
+        ], [
+            'date_soutenance.required' => 'La date de soutenance est obligatoire.',
+            'date_soutenance.date' => 'La date de soutenance est invalide.',
+            'statut.required' => 'Le statut est obligatoire.',
+            'statut.in' => 'Le statut doit etre Valide ou Ajourne.',
+            'description.max' => 'La description ne doit pas depasser 2000 caracteres.',
+            'student_id.required' => 'Veuillez selectionner un etudiant.',
+            'student_id.exists' => 'L etudiant selectionne est invalide.',
+            'directeur_memoire_id.required' => 'Veuillez choisir le directeur de mémoire.',
+            'directeur_memoire_id.exists' => 'Le directeur de mémoire sélectionné est invalide.',
+            'directeur_memoire_id.different' => 'Les trois membres du jury doivent être différents.',
+            'evaluateur_id.required' => 'Veuillez choisir l’évaluateur.',
+            'evaluateur_id.exists' => 'L’évaluateur sélectionné est invalide.',
+            'evaluateur_id.different' => 'Les trois membres du jury doivent être différents.',
+            'president_jury_id.required' => 'Veuillez choisir le président du jury.',
+            'president_jury_id.exists' => 'Le président du jury sélectionné est invalide.',
+            'president_jury_id.different' => 'Les trois membres du jury doivent être différents.',
+        ]);
     }
 }

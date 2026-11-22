@@ -10,32 +10,32 @@
     <div class="{{ $cardBody }}">
         <form method="POST" action="{{ route('soutenances.store') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2">
             @csrf
-            <input type="date" name="date_soutenance" class="rounded-lg border-slate-300" />
-            <select name="statut" class="rounded-lg border-slate-300">
+            <input type="date" name="date_soutenance" required class="rounded-lg border-slate-300" />
+            <select name="statut" required class="rounded-lg border-slate-300">
                 <option value="">Statut</option>
                 <option value="Valide">Valide</option>
                 <option value="Ajourne">Ajourne</option>
             </select>
-            <select name="student_id" class="rounded-lg border-slate-300 md:col-span-2">
+            <select name="student_id" required class="rounded-lg border-slate-300 md:col-span-2">
                 <option value="">Sélectionner un étudiant</option>
                 @foreach ($studentsList as $student)
                     <option value="{{ $student->id }}">{{ $student->nom }} {{ $student->prenom }} ({{ $student->matricule }})</option>
                 @endforeach
             </select>
-            <select name="directeur_memoire_id" class="rounded-lg border-slate-300">
-                <option value="">Directeur mémoire</option>
+            <select name="directeur_memoire_id" required class="rounded-lg border-slate-300">
+                <option value="">Directeur mémoire *</option>
                 @foreach ($teachersList as $teacher)
                     <option value="{{ $teacher->id }}">{{ $teacher->nom }} {{ $teacher->prenom }}</option>
                 @endforeach
             </select>
-            <select name="evaluateur_id" class="rounded-lg border-slate-300">
-                <option value="">Évaluateur</option>
+            <select name="evaluateur_id" required class="rounded-lg border-slate-300">
+                <option value="">Évaluateur *</option>
                 @foreach ($teachersList as $teacher)
                     <option value="{{ $teacher->id }}">{{ $teacher->nom }} {{ $teacher->prenom }}</option>
                 @endforeach
             </select>
-            <select name="president_jury_id" class="rounded-lg border-slate-300">
-                <option value="">Président jury</option>
+            <select name="president_jury_id" required class="rounded-lg border-slate-300">
+                <option value="">Président jury *</option>
                 @foreach ($teachersList as $teacher)
                     <option value="{{ $teacher->id }}">{{ $teacher->nom }} {{ $teacher->prenom }}</option>
                 @endforeach
@@ -71,7 +71,7 @@
                         <td class="px-4 py-3">{{ $soutenance->statut }}</td>
                         <td class="px-4 py-3 text-right space-x-2">
                             <a href="{{ route('soutenances.show', $soutenance) }}" class="text-slate-700">Voir</a>
-                            <a href="{{ route('soutenances.edit', $soutenance) }}" class="text-slate-700">Éditer</a>
+                            <a href="{{ route('soutenances.edit', $soutenance) }}" class="text-slate-700">Affecter le jury</a>
                             <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer cette soutenance ?">
                                 @csrf
                                 @method('DELETE')

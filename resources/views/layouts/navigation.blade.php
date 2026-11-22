@@ -1,9 +1,17 @@
+@php
+    $isTeacher = Auth::user()?->role === 'teacher';
+    $isAdmin = Auth::user()?->role === 'admin';
+    $homeRoute = $isTeacher
+        ? route('teacher.dashboard')
+        : route('dashboard');
+@endphp
+
 <nav x-data="{ open: false }" class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200/30 dark:border-gray-700/30 shadow-md dark:shadow-gray-950/50 sticky top-0 z-50 transition-colors duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <!-- Logo & Brand -->
             <div class="flex items-center">
-                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 hover:opacity-90 transition-opacity py-2 px-1">
+                <a href="{{ $homeRoute }}" class="flex items-center gap-2.5 hover:opacity-90 transition-opacity py-2 px-1">
                     <x-application-logo class="block h-8 w-auto fill-current text-blue-600" />
                     <div class="hidden sm:flex flex-col leading-tight">
                         <span class="text-xs font-semibold text-gray-500 uppercase tracking-widest">Lucas</span>
@@ -15,8 +23,8 @@
             <!-- Navigation Links -->
             <div class="hidden lg:flex lg:items-center lg:gap-1">
                 @auth
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        Tableau de bord
+                    <x-nav-link :href="$homeRoute" :active="request()->routeIs('dashboard', 'teacher.dashboard')">
+                        {{ $isTeacher ? 'Espace enseignant' : 'Tableau de bord' }}
                     </x-nav-link>
                     <x-nav-link :href="route('memoires.index')" :active="request()->routeIs('memoires.*')">
                         Mémoires
@@ -24,6 +32,11 @@
                     <x-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
                         Étudiants
                     </x-nav-link>
+                    @if ($isAdmin)
+                        <x-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                            Enseignants
+                        </x-nav-link>
+                    @endif
                     <x-nav-link :href="route('recu-paiements.index')" :active="request()->routeIs('recu-paiements.*')">
                         Reçus
                     </x-nav-link>
@@ -91,8 +104,8 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             @auth
-                <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                    Tableau de bord
+                <x-responsive-nav-link :href="$homeRoute" :active="request()->routeIs('dashboard', 'teacher.dashboard')">
+                    {{ $isTeacher ? 'Espace enseignant' : 'Tableau de bord' }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('memoires.index')" :active="request()->routeIs('memoires.*')">
                     Mémoires
@@ -100,6 +113,11 @@
                 <x-responsive-nav-link :href="route('students.index')" :active="request()->routeIs('students.*')">
                     Étudiants
                 </x-responsive-nav-link>
+                @if ($isAdmin)
+                    <x-responsive-nav-link :href="route('teachers.index')" :active="request()->routeIs('teachers.*')">
+                        Enseignants
+                    </x-responsive-nav-link>
+                @endif
                 <x-responsive-nav-link :href="route('recu-paiements.index')" :active="request()->routeIs('recu-paiements.*')">
                     Reçus
                 </x-responsive-nav-link>

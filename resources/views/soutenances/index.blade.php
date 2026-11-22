@@ -13,10 +13,12 @@
                 <x-icon name="download" size="sm" class="w-4 h-4" />
                 Exporter CSV
             </a>
-            <a href="{{ route('soutenances.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold hover:from-orange-700 hover:to-rose-800">
-                <x-icon name="plus-circle" size="sm" class="w-5 h-5" />
-                Ajouter une soutenance
-            </a>
+            @if (auth()->user()->role === 'admin')
+                <a href="{{ route('soutenances.create') }}" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold hover:from-orange-700 hover:to-rose-800">
+                    <x-icon name="plus-circle" size="sm" class="w-5 h-5" />
+                    Ajouter une soutenance
+                </a>
+            @endif
         </div>
     </div>
 
@@ -94,18 +96,20 @@
                                     <x-icon name="eye" size="sm" class="w-4 h-4" />
                                     <span class="hidden sm:inline">Voir</span>
                                 </a>
-                                <a href="{{ route('soutenances.edit', $soutenance) }}" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Modifier">
-                                    <x-icon name="pencil" size="sm" class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Modifier</span>
-                                </a>
-                                <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer cette soutenance ?">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Supprimer">
-                                        <x-icon name="trash" size="sm" class="w-4 h-4" />
-                                        <span class="hidden sm:inline">Supprimer</span>
-                                    </button>
-                                </form>
+                                @if (auth()->user()->role === 'admin')
+                                    <a href="{{ route('soutenances.edit', $soutenance) }}" class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Modifier">
+                                        <x-icon name="pencil" size="sm" class="w-4 h-4" />
+                                        <span class="hidden sm:inline">Modifier / affecter le jury</span>
+                                    </a>
+                                    <form method="POST" action="{{ route('soutenances.destroy', $soutenance) }}" class="inline" data-confirm="Êtes-vous sûr de vouloir supprimer cette soutenance ?">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3.5 py-2 rounded-xl transition-all duration-200 font-semibold text-xs hover:shadow-md hover:scale-105" title="Supprimer">
+                                            <x-icon name="trash" size="sm" class="w-4 h-4" />
+                                            <span class="hidden sm:inline">Supprimer</span>
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                         </td>
                     </tr>
@@ -120,10 +124,12 @@
                                     <p class="text-gray-900 font-bold text-lg">Aucune soutenance enregistrée</p>
                                     <p class="text-gray-600 text-sm mt-2">Il n'y a pas encore de soutenances dans le système</p>
                                 </div>
-                                <a href="{{ route('soutenances.create') }}" class="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold">
-                                    <x-icon name="plus-circle" size="sm" class="w-5 h-5" />
-                                    Ajouter une soutenance
-                                </a>
+                                @if (auth()->user()->role === 'admin')
+                                    <a href="{{ route('soutenances.create') }}" class="mt-4 inline-flex items-center gap-2 bg-gradient-to-r from-orange-600 to-rose-700 text-white px-6 py-3 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-300 font-semibold">
+                                        <x-icon name="plus-circle" size="sm" class="w-5 h-5" />
+                                        Ajouter une soutenance
+                                    </a>
+                                @endif
                             </div>
                         </td>
                     </tr>

@@ -61,10 +61,15 @@
                     <x-input-error :messages="$errors->get('statut')" />
                 </div>
 
+                <div class="md:col-span-2">
+                    <h2 class="text-lg font-semibold text-gray-900">Composition du jury</h2>
+                    <p class="text-sm text-gray-600">L’administrateur désigne trois enseignants différents.</p>
+                </div>
+
                 <!-- Directeur de mémoire -->
                 <div>
-                    <x-input-label for="directeur_memoire_id" class="text-sm font-semibold text-gray-700">Directeur de mémoire</x-input-label>
-                    <select name="directeur_memoire_id" id="directeur_memoire_id" class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
+                    <x-input-label for="directeur_memoire_id" class="text-sm font-semibold text-gray-700">Directeur de mémoire *</x-input-label>
+                    <select name="directeur_memoire_id" id="directeur_memoire_id" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
                         <option value="">-- Sélectionner un enseignant --</option>
                         @foreach ($teachers as $teacher)
                             <option value="{{ $teacher->id }}" @selected(old('directeur_memoire_id', $soutenance->directeur_memoire_id) == $teacher->id)>
@@ -77,8 +82,8 @@
 
                 <!-- Président du jury -->
                 <div>
-                    <x-input-label for="president_jury_id" class="text-sm font-semibold text-gray-700">Président du jury</x-input-label>
-                    <select name="president_jury_id" id="president_jury_id" class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
+                    <x-input-label for="president_jury_id" class="text-sm font-semibold text-gray-700">Président du jury *</x-input-label>
+                    <select name="president_jury_id" id="president_jury_id" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
                         <option value="">-- Sélectionner un enseignant --</option>
                         @foreach ($teachers as $teacher)
                             <option value="{{ $teacher->id }}" @selected(old('president_jury_id', $soutenance->president_jury_id) == $teacher->id)>
@@ -91,8 +96,8 @@
 
                 <!-- Évaluateur -->
                 <div>
-                    <x-input-label for="evaluateur_id" class="text-sm font-semibold text-gray-700">Évaluateur</x-input-label>
-                    <select name="evaluateur_id" id="evaluateur_id" class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
+                    <x-input-label for="evaluateur_id" class="text-sm font-semibold text-gray-700">Évaluateur *</x-input-label>
+                    <select name="evaluateur_id" id="evaluateur_id" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white">
                         <option value="">-- Sélectionner un enseignant --</option>
                         @foreach ($teachers as $teacher)
                             <option value="{{ $teacher->id }}" @selected(old('evaluateur_id', $soutenance->evaluateur_id) == $teacher->id)>

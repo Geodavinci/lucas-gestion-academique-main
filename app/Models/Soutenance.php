@@ -30,6 +30,13 @@ class Soutenance extends Model
         return $this->belongsTo(Student::class);
     }
 
+    public function getStudentFullNameAttribute()
+    {
+        return $this->student
+            ? trim($this->student->nom . ' ' . $this->student->prenom)
+            : 'Étudiant inconnu';
+    }
+
     public function directeurMemoire()
     {
         return $this->belongsTo(Teacher::class, 'directeur_memoire_id');

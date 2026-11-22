@@ -23,7 +23,7 @@ class NotificationService
                 'user_id' => $admin->id,
                 'type' => 'memoire_submitted',
                 'title' => 'Nouveau mémoire soumis',
-                'message' => "{$memoire->student->nom} {$memoire->student->prenom} a soumis un mémoire: \"{$memoire->titre}\"",
+                'message' => "{$memoire->student_full_name} a soumis un mémoire: \"{$memoire->titre}\"",
                 'data' => [
                     'memoire_id' => $memoire->id,
                     'student_id' => $memoire->student_id,
@@ -49,7 +49,7 @@ class NotificationService
                 'user_id' => $teacher->user->id,
                 'type' => 'jury_assigned',
                 'title' => 'Assignation à un jury',
-                'message' => "Vous êtes assigné au jury de {$soutenance->student->nom} {$soutenance->student->prenom}",
+                'message' => "Vous êtes assigné au jury de {$soutenance->student_full_name}",
                 'data' => [
                     'soutenance_id' => $soutenance->id,
                     'student_id' => $soutenance->student_id,
@@ -57,7 +57,7 @@ class NotificationService
             ]);
 
             if ($teacher->user->email) {
-                Mail::queue(new JuryAssignedMail($soutenance, $teacher));
+                Mail::to($teacher->user->email)->queue(new JuryAssignedMail($soutenance, $teacher));
             }
         }
     }

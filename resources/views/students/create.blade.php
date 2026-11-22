@@ -1,10 +1,10 @@
-@extends(‘layouts.app’)
+@extends('layouts.app')
 
-@section(‘content’)
+@section('content')
 <!-- Breadcrumb -->
 <x-breadcrumb :items="[
-    [‘label’ => ‘Étudiants’, ‘url’ => route(‘students.index’)],
-    [‘label’ => ‘Ajouter un étudiant’]
+    ['label' => 'Étudiants', 'url' => route('students.index')],
+    ['label' => 'Ajouter un étudiant']
 ]" />
 
 <div class="max-w-2xl mx-auto space-y-6">
@@ -16,7 +16,7 @@
 
     <!-- Form Card -->
     <div class="bg-white rounded-2xl shadow-lg border border-gray-100/50 overflow-hidden">
-        <form method="POST" action="{{ route(‘students.store’) }}" class="p-8 space-y-6">
+        <form method="POST" action="{{ route('students.store') }}" class="p-8 space-y-6">
             @csrf
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -27,12 +27,12 @@
                         id="matricule"
                         name="matricule"
                         type="text"
-                        value="{{ old(‘matricule’) }}"
+                        value="{{ old('matricule') }}"
                         placeholder="Ex: STU001"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    <x-input-error :messages="$errors->get(‘matricule’)" />
+                    <x-input-error :messages="$errors->get('matricule')" />
                 </div>
 
                 <!-- Filière -->
@@ -42,12 +42,12 @@
                         id="filiere"
                         name="filiere"
                         type="text"
-                        value="{{ old(‘filiere’) }}"
+                        value="{{ old('filiere') }}"
                         placeholder="Ex: Informatique"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    <x-input-error :messages="$errors->get(‘filiere’)" />
+                    <x-input-error :messages="$errors->get('filiere')" />
                 </div>
 
                 <!-- Nom -->
@@ -57,12 +57,12 @@
                         id="nom"
                         name="nom"
                         type="text"
-                        value="{{ old(‘nom’) }}"
+                        value="{{ old('nom') }}"
                         placeholder="Ex: Dupont"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    <x-input-error :messages="$errors->get(‘nom’)" />
+                    <x-input-error :messages="$errors->get('nom')" />
                 </div>
 
                 <!-- Prénom -->
@@ -72,12 +72,12 @@
                         id="prenom"
                         name="prenom"
                         type="text"
-                        value="{{ old(‘prenom’) }}"
+                        value="{{ old('prenom') }}"
                         placeholder="Ex: Jean"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    <x-input-error :messages="$errors->get(‘prenom’)" />
+                    <x-input-error :messages="$errors->get('prenom')" />
                 </div>
 
                 <!-- Email -->
@@ -87,12 +87,12 @@
                         id="email"
                         name="email"
                         type="email"
-                        value="{{ old(‘email’) }}"
+                        value="{{ old('email') }}"
                         placeholder="Ex: jean.dupont@email.com"
                         required
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    <x-input-error :messages="$errors->get(‘email’)" />
+                    <x-input-error :messages="$errors->get('email')" />
                 </div>
 
                 <!-- Téléphone -->
@@ -102,11 +102,11 @@
                         id="telephone"
                         name="telephone"
                         type="text"
-                        value="{{ old(‘telephone’) }}"
+                        value="{{ old('telephone') }}"
                         placeholder="Ex: +221 77 123 45 67"
                         class="mt-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
-                    <x-input-error :messages="$errors->get(‘telephone’)" />
+                    <x-input-error :messages="$errors->get('telephone')" />
                 </div>
 
                 <!-- Niveau -->
@@ -114,21 +114,21 @@
                     <x-input-label for="niveau" class="text-sm font-semibold text-gray-700">Niveau *</x-input-label>
                     <select name="niveau" id="niveau" required class="mt-2 block w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
                         <option value="">-- Sélectionner un niveau --</option>
-                        <option value="BTS 1" @selected(old(‘niveau’) == ‘BTS 1’)>BTS 1</option>
-                        <option value="BTS 2" @selected(old(‘niveau’) == ‘BTS 2’)>BTS 2</option>
-                        <option value="Licence 1" @selected(old(‘niveau’) == ‘Licence 1’)>Licence 1</option>
-                        <option value="Licence 2" @selected(old(‘niveau’) == ‘Licence 2’)>Licence 2</option>
-                        <option value="Licence 3" @selected(old(‘niveau’) == ‘Licence 3’)>Licence 3</option>
-                        <option value="Master 1" @selected(old(‘niveau’) == ‘Master 1’)>Master 1</option>
-                        <option value="Master 2" @selected(old(‘niveau’) == ‘Master 2’)>Master 2</option>
+                        <option value="BTS 1" @selected(old('niveau') == 'BTS 1')>BTS 1</option>
+                        <option value="BTS 2" @selected(old('niveau') == 'BTS 2')>BTS 2</option>
+                        <option value="Licence 1" @selected(old('niveau') == 'Licence 1')>Licence 1</option>
+                        <option value="Licence 2" @selected(old('niveau') == 'Licence 2')>Licence 2</option>
+                        <option value="Licence 3" @selected(old('niveau') == 'Licence 3')>Licence 3</option>
+                        <option value="Master 1" @selected(old('niveau') == 'Master 1')>Master 1</option>
+                        <option value="Master 2" @selected(old('niveau') == 'Master 2')>Master 2</option>
                     </select>
-                    <x-input-error :messages="$errors->get(‘niveau’)" />
+                    <x-input-error :messages="$errors->get('niveau')" />
                 </div>
             </div>
 
             <!-- Form Actions -->
             <div class="pt-6 border-t border-gray-200 flex gap-3 justify-end">
-                <a href="{{ route(‘students.index’) }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-200 font-semibold">
+                <a href="{{ route('students.index') }}" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-200 font-semibold">
                     Annuler
                 </a>
                 <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:shadow-lg hover:from-blue-700 hover:to-blue-800 active:scale-95 transition-all duration-200 font-semibold">

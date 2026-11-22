@@ -25,7 +25,7 @@
 
             <div class="info-box">
                 <p><strong>Étudiant:</strong> {{ $student->nom }} {{ $student->prenom }}</p>
-                <p><strong>Titre du mémoire:</strong> {{ $soutenance->memoire->titre ?? 'Non spécifié' }}</p>
+                <p><strong>Titre du mémoire:</strong> {{ $soutenance->memoire->first()?->titre ?? 'Non spécifié' }}</p>
                 <p><strong>Date et heure:</strong> {{ $soutenance->date_soutenance->format('d/m/Y à H:i') }}</p>
                 <p><strong>Lieu:</strong> {{ $soutenance->lieu }}</p>
             </div>
